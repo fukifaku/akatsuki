@@ -177,7 +177,7 @@ $(document).ready(function () {
         $(this).addClass('current');
         $(this).children('.ninja-description').show();
     });
-
+//textinput effect
     (function () {
         // trim polyfill : https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/Trim
         if (!String.prototype.trim) {

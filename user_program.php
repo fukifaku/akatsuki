@@ -42,17 +42,17 @@ $id = @$_GET['id'];
             <li>
                <h2><span class="icon-mission"></span>Nhiệm vụ</h2>
                <ul>
-                  <li id="them-nhiem-vu"><a href="nhiemvu_them.php" >Thêm nhiệm vụ</a></li>
-                  <li id='lich-su-nhiem-vu'><a href="nhiemvu_lichsu.php">Lịch sử nhiệm vụ</a></li>
+                  <li id="them-nhiem-vu"><a href="nhiemvu_them.php?id=test1&pass=1" >Thêm nhiệm vụ</a></li>
+                  <li id='lich-su-nhiem-vu'><a href="nhiemvu_lichsu.php?id=test1&pass=1">Lịch sử nhiệm vụ</a></li>
                </ul>
             </li>
             <li class ="active">
                <h2><span class="icon-tasks"></span>Ninja</h2>
                <ul>
                   <li id="xep-hang"><a href="ninja_xephang.php?id=test1&pass=1" >Bảng xếp hạng</a></li>
-                  <li id="ho-so"><a href="ninja_hoso.php" >Hồ sơ Ninja</a></li>
-                  <li id='trang-thai'><a href="ninja_trangthai.php">Trạng thái</a></li>
-                  <li id='yeu-thich'><a href="ninja_yeuthich.php">Yêu thích</a></li>
+                  <li id="ho-so"><a href="ninja_hoso.php?id=test1&pass=1" >Hồ sơ Ninja</a></li>
+                  <li id='trang-thai'><a href="ninja_trangthai.php?id=test1&pass=1">Trạng thái</a></li>
+                  <li id='yeu-thich'><a href="ninja_yeuthich.php?id=test1&pass=1">Yêu thích</a></li>
                </ul>
             </li>
             <li>
@@ -135,6 +135,7 @@ $id = @$_GET['id'];
    <script src="js/main.js"></script>
    <script src="js/classie.js"></script>
    <script src="js/jquery.datetimepicker.full.js"></script>
+   
 </body>
 
 </html>

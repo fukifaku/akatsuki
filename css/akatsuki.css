@@ -1,5 +1,5 @@
 ﻿body {
-    background-image: url("background/akatsuki.jpg");
+    background-image: url("../background/akatsuki.jpg");
     background-size: cover;
     color: white;
 }
@@ -112,7 +112,13 @@
     width: 800px;
 }
 #bang-ho-so{
-    display: none;
+    margin: 30px auto auto 340px;
+    width: 700px;
+    background-color: #343642;
+    box-shadow: 
+        0 5px 15px 1px rgba(0, 0, 0, 0.6), 
+        0 0 200px 1px rgba(255, 255, 255, 0.5);
+  //  display: none;
     // background-color: #002535;
 }
 #bang-xep-hang {
@@ -357,30 +363,3 @@ textarea {
     resize: none;
 }
 
-.input__label2 {
-    display: inline-block;
-    float: right;
-    padding: 0 1em;
-    width: 40%;
-    color: #6a7989;
-    font-weight: normal;
-    font-size: 70%;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-.input__label--isao2 {
-    position: relative;
-    overflow: hidden;
-    padding: 0;
-    width: 70%;
-    color: white;
-    text-align: left;
-    font-weight: normal;
-}
