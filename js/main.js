@@ -166,8 +166,8 @@ $(document).ready(function () {
     });
     $("#accordian ul ul #them-nhiem-vu").click(function () {
         $('#them-nhiem-vu').addClass('active');
-//        $("#bang-them-nhiem-vu").show();
-//        $("#bang-xep-hang").hide();
+ //       $("#bang-them-nhiem-vu").show();
+  //      $("#bang-xep-hang").hide();
     });
 
 //hien description cua ninja
