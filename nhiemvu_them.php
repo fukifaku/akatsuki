@@ -83,7 +83,15 @@ $id = @$_GET['id'];
               $ninmu_skill = $_POST['skill'];
               $ninmu_starttime = $_POST['ninmu-time-start'];
               $ninmu_endtime = $_POST['ninmu-time-end'];
-              echo "ten nhiem vu: $ninmu_ten</br>mo ta nhiem vu: $ninmu_mota</br>lang: $ninmu_lang</br>skill: $ninmu_skill[0], $ninmu_skill[1]</br>thoi gian ket thuc:$ninmu_endtime</br>thoi gian bat dau: $ninmu_starttime</div>";
+              echo "ten nhiem vu: $ninmu_ten</br>mo ta nhiem vu: $ninmu_mota</br>lang: $ninmu_lang</br>skill: $ninmu_skill[0], $ninmu_skill[1]</br>thoi gian ket thuc:$ninmu_endtime</br>thoi gian bat dau: $ninmu_starttime";
+              $end = date_create($ninmu_endtime);
+              $start = date_create($ninmu_starttime);
+              $time2 = date_diff($start,$end);
+              $s=$time2->format("day %d, hour %h, minutes %i");
+              $end2 = $start;
+              date_add($end2, $time2);
+              $end3 = date_format($end2, "Y-m-d H:i:m");
+              echo "</br>thesecond: $s, ketthuc: $end3;</div>";
           } else {
               ?>
              <form class="form-them-nhiem-vu" method="post">
