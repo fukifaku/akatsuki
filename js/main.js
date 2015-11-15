@@ -227,4 +227,18 @@ jQuery.each(jQuery('textarea[data-autoresize]'), function () {
     }).removeAttr('data-autoresize');
 });
 
+$('select').barrating('show');
+
+//$('#example').barrating('show', {
+//  theme: 'my-awesome-theme'
+//  onSelect: function(value, text, event) {
+//    if (typeof(event) !== 'undefined') {
+//      // rating was selected by a user
+//      console.log(event.target);
+//    } else {
+//      // rating was selected programmatically
+//      // by calling `set` method
+//    }
+//  }
+//});
 

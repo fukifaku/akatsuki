@@ -16,6 +16,7 @@ $id = @$_GET['id'];
       <link rel="stylesheet" type="text/css" href="css/set1.css" />
       <link rel="stylesheet" type="text/css" href="css/akatsuki.css">
       <link rel="stylesheet" type="text/css" href="css/jquery.datetimepicker.css"/>
+      <link rel="stylesheet" href="css/bars-movie.css">
       <script src="js/modernizr.js"></script> 
 
 
@@ -42,33 +43,33 @@ $id = @$_GET['id'];
             <li>
                <h2><span class="icon-mission"></span>Nhiệm vụ</h2>
                <ul>
-                  <li id="them-nhiem-vu"><a href="nhiemvu_them.php?id=<?php echo $id?>&pass=<?php echo $pass?>" >Thêm nhiệm vụ</a></li>
-                  <li id='lich-su-nhiem-vu'><a href="nhiemvu_lichsu.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Lịch sử nhiệm vụ</a></li>
+                  <li id="them-nhiem-vu"><a href="nhiemvu_them.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>" >Thêm nhiệm vụ</a></li>
+                  <li id='lich-su-nhiem-vu'><a href="nhiemvu_lichsu.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Lịch sử nhiệm vụ</a></li>
                </ul>
             </li>
             <li class ="active">
                <h2><span class="icon-tasks"></span>Ninja</h2>
                <ul>
-                  <li id="xep-hang"><a href="ninja_xephang.php?id=<?php echo $id?>&pass=<?php echo $pass?>" >Bảng xếp hạng</a></li>
-                  <li id="ho-so"><a href="ninja_hoso.php?id=<?php echo $id?>&pass=<?php echo $pass?>" >Hồ sơ Ninja</a></li>
-                  <li id='trang-thai'><a href="ninja_trangthai.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Trạng thái</a></li>
-                  <li id='yeu-thich'><a href="ninja_yeuthich.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Yêu thích</a></li>
+                  <li id="xep-hang"><a href="ninja_xephang.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>" >Bảng xếp hạng</a></li>
+                  <li id="ho-so"><a href="ninja_hoso.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>" >Hồ sơ Ninja</a></li>
+                  <li id='trang-thai'><a href="ninja_trangthai.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Trạng thái</a></li>
+                  <li id='yeu-thich'><a href="ninja_yeuthich.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Yêu thích</a></li>
                </ul>
             </li>
             <li>
                <h2><span class="icon-calendar"></span>Tài khoản</h2>
                <ul>
-                  <li id='thong-tin'><a href="taikhoan_thongtin.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Thông tin</a></li>
-                  <li id='ngan-quy'><a href="taikhoan_nganquy.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Ngân Quỹ</a></li>
+                  <li id='thong-tin'><a href="taikhoan_thongtin.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Thông tin</a></li>
+                  <li id='ngan-quy'><a href="taikhoan_nganquy.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Ngân Quỹ</a></li>
                   <li id='dang-xuat'><a href='user_program.php'>Đăng xuất</a></li>
                </ul>
             </li>
             <li>
                <h2><span class="icon-heart"></span>Hướng dẫn</h2>
                <ul>
-                  <li id='hd-nhiemvu'><a href="huongdan_nhiemvu.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Nhiệm Vụ</a></li>
-                  <li id='hd-ninja'><a href="huongdan_ninja.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Ninja</a></li>
-                  <li id='hd-taikhoan'><a href="huongdan_taikhoan?id=<?php echo $id?>&pass=<?php echo $pass?>">Tài khoản</a></li>
+                  <li id='hd-nhiemvu'><a href="huongdan_nhiemvu.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Nhiệm Vụ</a></li>
+                  <li id='hd-ninja'><a href="huongdan_ninja.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Ninja</a></li>
+                  <li id='hd-taikhoan'><a href="huongdan_taikhoan?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Tài khoản</a></li>
                </ul>
             </li>
          </ul>
@@ -86,8 +87,8 @@ $id = @$_GET['id'];
               echo "ten nhiem vu: $ninmu_ten</br>mo ta nhiem vu: $ninmu_mota</br>lang: $ninmu_lang</br>skill: $ninmu_skill[0], $ninmu_skill[1]</br>thoi gian ket thuc:$ninmu_endtime</br>thoi gian bat dau: $ninmu_starttime";
               $end = date_create($ninmu_endtime);
               $start = date_create($ninmu_starttime);
-              $time2 = date_diff($start,$end);
-              $s=$time2->format("day %d, hour %h, minutes %i");
+              $time2 = date_diff($start, $end);
+              $s = $time2->format("day %d, hour %h, minutes %i");
               $end2 = $start;
               date_add($end2, $time2);
               $end3 = date_format($end2, "Y-m-d H:i:m");
@@ -118,6 +119,15 @@ $id = @$_GET['id'];
                     }
                     ?>
                 </div>
+                   
+                      <select id="example-movie" name="rating">
+                         <option value="50">Siêu Dễ</option>
+                         <option value="100">Dễ</option>
+                         <option value="150" selected="selected">Trung Bình</option>
+                         <option value="200">Khó</option>
+                         <option value="250">Siêu Khó</option>
+                      </select>
+                 
                 <div id="form-nhiem-vu-time">
                    <label class="title">thoi gian bat dau</label>
                    <input type="text" id="datetimepicker_dark" name="ninmu-time-start"/>
@@ -127,7 +137,6 @@ $id = @$_GET['id'];
                    <input type="text" id="datetimepicker_dark" name="ninmu-time-end"/>
                 </div>
                 <div id="form-nhiem-vu-lang"> <label class="title"><?php
-                
 //                date_default_timezone_set('Asia/Saigon');
 //                $d1 = strtotime("26-10-2015 16:28");
 //                $today = date('Y-m-d H:i:s');
@@ -150,8 +159,7 @@ $id = @$_GET['id'];
 ////                $timezone = 'Asia/Saigon';
 ////                $dtUtcDate = strtotime($dateStr);
 ////                echo $dtUtcDate;
-                
-                ?></label>
+                        ?></label>
                    <label><input class = "lang-chon" type="radio" name="radio" value="la" /><img src="fb1.jpg" height="40" width="40" class="img-circle"></label>
                    <label><input class = "lang-chon" type="radio" name="radio" value="da" /><img src="fb1.jpg" height="40" width="40" class="img-circle"></label>
                    <label><input class = "lang-chon" type="radio" name="radio" value="suong" /><img src="fb1.jpg" height="40" width="40" class="img-circle"></label>
@@ -160,19 +168,35 @@ $id = @$_GET['id'];
                 </div>
                 <div class="submit"><input type="submit" value="submit" name="submit-button"/></div>
              </form>
-                   <?php
-               }
-               ?>
+             <?php
+         }
+         ?>
 
       </div>
 
 
-
+<pre>
+<code>
+$('#example').barrating('show', {
+  theme: 'my-awesome-theme'
+  onSelect: function(value, text, event) {
+    if (typeof(event) !== 'undefined') {
+      // rating was selected by a user
+      console.log(event.target);
+    } else {
+      // rating was selected programmatically
+      // by calling `set` method
+    }
+  }
+});
+</code>
+</pre>
       <script src="js/jquery-2.1.4.min.js"></script>
       <script src="js/main.js"></script>
       <script src="js/classie.js"></script>
       <script src="js/jquery.datetimepicker.full.js"></script>
-
+      <script src="js/jquery.barrating.js"></script>
+      <script src="js/examples.js"></script>
    </body>
 
 </html>
