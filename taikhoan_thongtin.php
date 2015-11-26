@@ -39,11 +39,11 @@ $id = @$_GET['id'];
       </header>
       <div id="accordian">
          <ul>
-            <li class ="active">
+            <li>
                <h2><span class="icon-mission"></span>Nhiệm vụ</h2>
                <ul>
                   <li id="them-nhiem-vu"><a href="nhiemvu_them.php?id=<?php echo $id?>&pass=<?php echo $pass?>" >Thêm nhiệm vụ</a></li>
-                  <li id='lich-su-nhiem-vu' class ="active"><a href="nhiemvu_lichsu.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Lịch sử nhiệm vụ</a></li>
+                  <li id='lich-su-nhiem-vu'><a href="nhiemvu_lichsu.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Lịch sử nhiệm vụ</a></li>
                </ul>
             </li>
             <li>
@@ -55,10 +55,10 @@ $id = @$_GET['id'];
                   <li id='yeu-thich'><a href="ninja_yeuthich.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Yêu thích</a></li>
                </ul>
             </li>
-            <li>
+            <li class ="active">
                <h2><span class="icon-calendar"></span>Tài khoản</h2>
                <ul>
-                  <li id='thong-tin'><a href="taikhoan_thongtin.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Thông tin</a></li>
+                  <li id='thong-tin' class ="active"><a href="taikhoan_thongtin.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Thông tin</a></li>
                   <li id='ngan-quy'><a href="taikhoan_nganquy.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Ngân Quỹ</a></li>
                   <li id='dang-xuat'><a href='user_program.php'>Đăng xuất</a></li>
                </ul>

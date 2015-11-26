@@ -22,7 +22,7 @@ $id = @$_GET['id'];
    </head>
    <body>
        <?php
-       $res = pg_query($conn, "Select customer_name, customer_avatar from customer where customer_username = '$id'");
+       $res = @pg_query($conn, "Select customer_name, customer_avatar from customer where customer_username = '$id'");
        $row = @pg_fetch_row($res);
        $customer_name = $row[0];
        $customer_avatar = $row[1];
@@ -49,7 +49,7 @@ $id = @$_GET['id'];
             <li class ="active">
                <h2><span class="icon-tasks"></span>Ninja</h2>
                <ul>
-                  <li id="xep-hang"><a href="ninja_xephang.php?id=<?php echo $id?>&pass=<?php echo $pass?>" >Bảng xếp hạng</a></li>
+                  <li id="xep-hang"  class ="active"><a href="ninja_xephang.php?id=<?php echo $id?>&pass=<?php echo $pass?>" >Bảng xếp hạng</a></li>
                   <li id="ho-so"><a href="ninja_hoso.php?id=<?php echo $id?>&pass=<?php echo $pass?>" >Hồ sơ Ninja</a></li>
                   <li id='trang-thai'><a href="ninja_trangthai.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Trạng thái</a></li>
                   <li id='yeu-thich'><a href="ninja_yeuthich.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Yêu thích</a></li>
@@ -68,7 +68,7 @@ $id = @$_GET['id'];
                <ul>
                   <li id='hd-nhiemvu'><a href="huongdan_nhiemvu.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Nhiệm Vụ</a></li>
                   <li id='hd-ninja'><a href="huongdan_ninja.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Ninja</a></li>
-                  <li id='hd-taikhoan'><a href="huongdan_taikhoan?id=<?php echo $id?>&pass=<?php echo $pass?>">Tài khoản</a></li>
+                  <li id='hd-taikhoan'><a href="huongdan_taikhoan.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Tài khoản</a></li>
                </ul>
             </li>
          </ul>
@@ -82,7 +82,7 @@ $id = @$_GET['id'];
          </div>
 
          <?php
-         $res = pg_query($conn, "Select ninja_name, ninja_avatar, ninja_point, ninja_ninmu_success, ninja_ninmu_fail, ninja_cost, jutsu_logo, sato_name from ninja
+         $res = @pg_query($conn, "Select ninja_name, ninja_avatar, ninja_point, ninja_ninmu_success, ninja_ninmu_fail, ninja_cost, jutsu_logo, sato_name from ninja
                                         join ninja_jutsu on ninja_jutsu.ninja_id = ninja.ninja_id
 					join jutsu on jutsu.jutsu_id = ninja_jutsu.jutsu_id
                                         join sato_ninja on sato_ninja.ninja_id = ninja.ninja_id
@@ -90,7 +90,7 @@ $id = @$_GET['id'];
 
          $i = -1;
          $ninja_name[-1] = 'xxx';
-         while ($row = pg_fetch_row($res)) {
+         while ($row = @pg_fetch_row($res)) {
              if ($row[0] != $ninja_name[$i]) {
                  $i++;
                  $j = 0;

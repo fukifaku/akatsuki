@@ -9,7 +9,9 @@
             <file>file:/E:/xampp/htdocs/akatsuki/css/normalize.css</file>
             <file>file:/E:/xampp/htdocs/akatsuki/js/main.js</file>
             <file>file:/E:/xampp/htdocs/akatsuki/ninja_hoso.php</file>
+            <file>file:/E:/xampp/htdocs/akatsuki/create_account.php</file>
             <file>file:/E:/xampp/htdocs/akatsuki/css/akatsuki.css</file>
+            <file>file:/E:/xampp/htdocs/akatsuki/ninja_information.php</file>
             <file>file:/E:/xampp/htdocs/akatsuki/try.php</file>
             <file>file:/E:/xampp/htdocs/akatsuki/ninja_yeuthich.php</file>
             <file>file:/E:/xampp/htdocs/akatsuki/css/reset.css</file>
@@ -17,8 +19,13 @@
             <file>file:/E:/xampp/htdocs/akatsuki/css/style.css</file>
             <file>file:/E:/xampp/htdocs/akatsuki/nhiemvu_them.php</file>
             <file>file:/E:/xampp/htdocs/akatsuki/css/set2.css</file>
+            <file>file:/E:/xampp/htdocs/akatsuki/taikhoan_nganquy.php</file>
             <file>file:/E:/xampp/htdocs/akatsuki/js/classie.js</file>
+            <file>file:/E:/xampp/htdocs/akatsuki/huongdan_taikhoan.php</file>
             <file>file:/E:/xampp/htdocs/akatsuki/user_program.php</file>
+            <file>file:/E:/xampp/htdocs/akatsuki/taikhoan_thongtin.php</file>
+            <file>file:/E:/xampp/htdocs/akatsuki/huongdan_ninja.php</file>
+            <file>file:/E:/xampp/htdocs/akatsuki/huongdan_nhiemvu.php</file>
         </group>
     </open-files>
 </project-private>

@@ -39,11 +39,11 @@ $id = @$_GET['id'];
       </header>
       <div id="accordian">
          <ul>
-            <li class ="active">
+            <li>
                <h2><span class="icon-mission"></span>Nhiệm vụ</h2>
                <ul>
                   <li id="them-nhiem-vu"><a href="nhiemvu_them.php?id=<?php echo $id?>&pass=<?php echo $pass?>" >Thêm nhiệm vụ</a></li>
-                  <li id='lich-su-nhiem-vu' class ="active"><a href="nhiemvu_lichsu.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Lịch sử nhiệm vụ</a></li>
+                  <li id='lich-su-nhiem-vu'><a href="nhiemvu_lichsu.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Lịch sử nhiệm vụ</a></li>
                </ul>
             </li>
             <li>
@@ -63,10 +63,10 @@ $id = @$_GET['id'];
                   <li id='dang-xuat'><a href='user_program.php'>Đăng xuất</a></li>
                </ul>
             </li>
-            <li>
+            <li  class ="active">
                <h2><span class="icon-heart"></span>Hướng dẫn</h2>
                <ul>
-                  <li id='hd-nhiemvu'><a href="huongdan_nhiemvu.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Nhiệm Vụ</a></li>
+                  <li id='hd-nhiemvu'  class ="active"><a href="huongdan_nhiemvu.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Nhiệm Vụ</a></li>
                   <li id='hd-ninja'><a href="huongdan_ninja.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Ninja</a></li>
                   <li id='hd-taikhoan'><a href="huongdan_taikhoan.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Tài khoản</a></li>
                </ul>

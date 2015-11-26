@@ -133,7 +133,16 @@
         0 0 200px 1px rgba(255, 255, 255, 0.5);
 }
 
-
+#bang-thong-tin {
+   // display: none;
+    padding: 20px; 
+    margin: 30px auto auto 340px;
+    width: 700px;
+    background-color: #343642;
+    box-shadow: 
+        0 5px 15px 1px rgba(0, 0, 0, 0.6), 
+        0 0 200px 1px rgba(255, 255, 255, 0.5);
+}
 
 .table-hover > tbody > tr:hover {
     background-color: #D85269;

@@ -23,7 +23,7 @@ $id = @$_GET['id'];
    </head>
    <body>
        <?php
-       $res = pg_query($conn, "Select customer_name, customer_avatar from customer where customer_username = '$id'");
+       $res = @pg_query($conn, "Select customer_name, customer_avatar from customer where customer_username = '$id'");
        $row = @pg_fetch_row($res);
        $customer_name = $row[0];
        $customer_avatar = $row[1];
@@ -40,14 +40,14 @@ $id = @$_GET['id'];
       </header>
       <div id="accordian">
          <ul>
-            <li>
+            <li class ="active">
                <h2><span class="icon-mission"></span>Nhiệm vụ</h2>
                <ul>
-                  <li id="them-nhiem-vu"><a href="nhiemvu_them.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>" >Thêm nhiệm vụ</a></li>
+                  <li id="them-nhiem-vu" class ="active"><a href="nhiemvu_them.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>" >Thêm nhiệm vụ</a></li>
                   <li id='lich-su-nhiem-vu'><a href="nhiemvu_lichsu.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Lịch sử nhiệm vụ</a></li>
                </ul>
             </li>
-            <li class ="active">
+            <li >
                <h2><span class="icon-tasks"></span>Ninja</h2>
                <ul>
                   <li id="xep-hang"><a href="ninja_xephang.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>" >Bảng xếp hạng</a></li>
@@ -69,7 +69,7 @@ $id = @$_GET['id'];
                <ul>
                   <li id='hd-nhiemvu'><a href="huongdan_nhiemvu.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Nhiệm Vụ</a></li>
                   <li id='hd-ninja'><a href="huongdan_ninja.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Ninja</a></li>
-                  <li id='hd-taikhoan'><a href="huongdan_taikhoan?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Tài khoản</a></li>
+                  <li id='hd-taikhoan'><a href="huongdan_taikhoan.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Tài khoản</a></li>
                </ul>
             </li>
          </ul>
@@ -77,66 +77,223 @@ $id = @$_GET['id'];
 
       <div id ="bang-them-nhiem-vu">
           <?php
-          if (@isset($_POST['submit-button'])) {
-              $ninmu_ten = $_POST['ten'];
-              $ninmu_mota = $_POST['mota'];
-              $ninmu_lang = $_POST['radio'];
-              $ninmu_skill = $_POST['skill'];
-              $ninmu_starttime = $_POST['ninmu-time-start'];
-              $ninmu_endtime = $_POST['ninmu-time-end'];
-              echo "ten nhiem vu: $ninmu_ten</br>mo ta nhiem vu: $ninmu_mota</br>lang: $ninmu_lang</br>skill: $ninmu_skill[0], $ninmu_skill[1]</br>thoi gian ket thuc:$ninmu_endtime</br>thoi gian bat dau: $ninmu_starttime";
-              $end = date_create($ninmu_endtime);
-              $start = date_create($ninmu_starttime);
-              $time2 = date_diff($start, $end);
-              $s = $time2->format("day %d, hour %h, minutes %i");
-              $end2 = $start;
-              date_add($end2, $time2);
-              $end3 = date_format($end2, "Y-m-d H:i:m");
-              echo "</br>thesecond: $s, ketthuc: $end3;</div>";
-          } else {
-              ?>
-             <form class="form-them-nhiem-vu" method="post">
-                <div id="form-nhiem-vu-title">
-                   <h2>them nv</h2>
-                </div>
-                <div id="form-nhiem-vu-ten" title="Tên Nhiệm Vụ">
-                   <span class="input input--isao">
-                      <input class="input__field input__field--isao" type="text" id="nhiem-vu-ten" name="ten" />
-                      <label class="input__label input__label--isao" for="nhiem-vu-ten" data-content="Tên Nhiệm Vụ">
-                         <span class="input__label-content input__label-content--isao">Tên Nhiệm Vụ</span>
-                      </label>
-                   </span>
-                </div>
-                <div id="form-nhiem-vu-mo-ta">
-                   <label class="title">Mô tả nhiệm vụ</label>
-                   <textarea style="overflow: hidden" data-autoresize rows="2" name="mota"  id="nhiem-vu-mo-ta">s</textarea>
-                </div>
-                <div id="form-nhiem-vu-skill"><label class="title">chon skill</label>
-                    <?php
-                    $res = pg_query($conn, "Select jutsu_logo, jutsu_id from jutsu");
-                    while ($row = @pg_fetch_row($res)) {
-                        echo "<label><input class = 'skill-chon' type='checkbox' name='skill[]' value='$row[1]' /><img src='$row[0]' height='40' width='40' class='img-circle'></label>";
-                    }
-                    ?>
-                </div>
-                   
-                      <select id="example-movie" name="rating">
-                         <option value="50">Siêu Dễ</option>
-                         <option value="100">Dễ</option>
-                         <option value="150" selected="selected">Trung Bình</option>
-                         <option value="200">Khó</option>
-                         <option value="250">Siêu Khó</option>
-                      </select>
-                 
-                <div id="form-nhiem-vu-time">
-                   <label class="title">thoi gian bat dau</label>
-                   <input type="text" id="datetimepicker_dark" name="ninmu-time-start"/>
-                </div>
-                <div id="form-nhiem-vu-time">
-                   <label class="title">thoi gian ket thuc</label>
-                   <input type="text" id="datetimepicker_dark" name="ninmu-time-end"/>
-                </div>
-                <div id="form-nhiem-vu-lang"> <label class="title"><?php
+//          if (@isset($_POST['submit-button'])) {
+//              $ninmu_ten = $_POST['ten'];
+//              $ninmu_mota = $_POST['mota'];
+//              $ninmu_lang = $_POST['radio'];
+//              $ninmu_skill = $_POST['skill'];
+//              $ninmu_point = $_POST['difficulty'];
+//              $ninmu_starttime = $_POST['ninmu-time-start'];
+//              $ninmu_endtime = $_POST['ninmu-time-end'];
+//              //echo "ten nhiem vu: $ninmu_ten</br>mo ta nhiem vu: $ninmu_mota</br>lang: $ninmu_lang</br>skill: $ninmu_skill[0], $ninmu_skill[1]</br>thoi gian ket thuc:$ninmu_endtime</br>thoi gian bat dau: $ninmu_starttime";
+//              $end = date_create($ninmu_endtime);
+//              $start = date_create($ninmu_starttime);
+//              $time2 = date_diff($start, $end);
+//              $s = $time2->format("day %d, hour %h, minutes %i");
+//              $end2 = $start;
+//              date_add($end2, $time2);
+//              $end3 = date_format($end2, "Y-m-d H:i:m");
+//              //echo "</br>thesecond: $s, ketthuc: $end3;</div>";
+////              $res = pg_query($conn, "insert into ninmu(ninmu_name, ninmu_teampoint, ninmu_time_start, ninmu_time_end, ninmu_description)"
+////                      . "values('$ninmu_ten', $ninmu_point, '$ninmu_starttime', '$ninmu_endtime', '$ninmu_mota')");
+////              
+//              $count = 0;
+//              $count_skill = 0;
+//              while (@$ninmu_skill[$count_skill]) {
+//                  echo "$ninmu_skill[$count_skill]: ";
+//                  $res = pg_query($conn, "Select ninja_id from ninja natural join ninja_jutsu where jutsu_id = $ninmu_skill[$count_skill] order by ninja_cost asc");
+//                  $i = 0;
+//                  while ($row = @pg_fetch_row($res)) {
+//                      echo "$row[0] ";
+//                      $result_ninja[$count_skill][$i] = $row[0];
+//                      $i++;
+//                  }
+//                  $count_skill++;
+//                  echo "</br>";
+//              }
+//              $count_ninja = 0;
+//              $count_team = 0;
+//              $count_skill = 1;
+//              $count_ninja0 = $count_ninja1 = $count_ninja2 = $count_ninja3 = $count_ninja4 = $count_ninja5 = $count_ninja6 = 0;
+////              while (@$result_ninja[0][$count_ninja]) {
+////                  $string = $result_ninja[0][$count_ninja];
+////                  echo "$string ";
+////                  while(@$result_ninja[$count_skill])
+////                      $n = 0;
+////                      while ($result_ninja[$i][$n]) {
+////                          $result_team[$count_team][0] = $result_ninja[0][$count_ninja];
+////                          $result_team[$count_team][$i] = $result_ninja[$i][$n];
+////                          $n++;
+////                      }
+////                  }
+////                  $count_ninja++;
+////              }
+//              while (@$result_ninja[0][$count_ninja0]) {
+//                  if (!@$result_team[$count_team - 1][0] && @$result_team[$count_team - 2][0]) {
+//                      $count_team--;
+//                  }
+//                  $result_team[$count_team][0] = $result_ninja[0][$count_ninja0];
+//                  $count_ninja1 = 0;
+//                  if (!@$result_ninja[1][$count_ninja1]) {
+//                      
+//                  } else {
+//                      while (@$result_ninja[1][$count_ninja1]) {
+//                          $string = @$result_ninja[1][$count_ninja1];
+//                          //echo "$count_ninja1 this $string team $count_team<br/>";
+//                          if (!@$result_team[$count_team - 1][0] && @$result_team[$count_team - 2][0]) {
+//                              $count_team--;
+//                          }
+//                          $string1 = $result_team[$count_team][0] = $result_ninja[0][$count_ninja0];
+//                          $string2 = $result_team[$count_team][1] = $result_ninja[1][$count_ninja1];
+//                          // echo "fuck $string1 $string2 </br>";
+//                          $count_ninja2 = 0;
+//                          if (!@$result_ninja[2][$count_ninja2]) {
+//                              
+//                          } else {
+//                              while (@$result_ninja[2][$count_ninja2]) {
+//                                  if (!@$result_team[$count_team - 1][0] && @$result_team[$count_team - 2][0]) {
+//                                      $count_team--;
+//                                  }
+//                                  $string1 = $result_team[$count_team][0] = $result_ninja[0][$count_ninja0];
+//                                  $string2 = $result_team[$count_team][1] = $result_ninja[1][$count_ninja1];
+//                                  $string3 = $result_team[$count_team][2] = $result_ninja[2][$count_ninja2];
+//                               //   echo "team $count_team<br/>";
+//                                  // echo "$count_team: $string1 $string2 $string3</br>";
+//                                  $count_ninja3 = 0;
+//                                  if (!@$result_ninja[3][$count_ninja3]) {
+//                                      
+//                                  } else {
+//                                      while (@$result_ninja[3][$count_ninja3]) {
+//
+//                                          $result_team[$count_team][3] = $result_ninja[3][$count_ninja3];
+//                                          $count_ninja4 = 0;
+//                                          if (!@$result_ninja[4][$count_ninja4]) {
+//                                              
+//                                          } else {
+//                                              while (@$result_ninja[4][$count_ninja4]) {
+//
+//                                                  $result_team[$count_team][4] = $result_ninja[4][$count_ninja4];
+//                                                  $count_ninja5 = 0;
+//                                                  if (!@$result_ninja[5][$count_ninja5]) {
+//                                                      
+//                                                  } else {
+//                                                      while (@$result_ninja[5][$count_ninja5]) {
+//
+//                                                          $result_team[$count_team][5] = $result_ninja[5][$count_ninja5];
+//                                                          $count_ninja6 = 0;
+//                                                          if (!@$result_ninja[6][$count_ninja6]) {
+//                                                              
+//                                                          } else {
+//                                                              while (@$result_ninja[6][$count_ninja6]) {
+//
+//                                                                  $result_team[$count_team][6] = $result_ninja[6][$count_ninja6];
+//                                                                  $count_team++;
+//                                                                  $count_ninja6++;
+//                                                              }
+//                                                          } $count_team++;
+//                                                          $count_ninja5++;
+//                                                      }
+//                                                  } $count_team++;
+//                                                  $count_ninja4++;
+//                                              }
+//                                          } $count_team++;
+//                                          $count_ninja3++;
+//                                      }
+//                                  }
+//                                  $count_team++;
+//                                  $count_ninja2++;
+//                              }
+//                          }
+//                          $count_team++;
+//                          $count_ninja1++;
+//                      }
+//                  }
+//                  $count_team++;
+//                  $count_ninja0++;
+//              }
+//              //echo "countteam $count_team<br/>";
+//              //  $string = $result_team[6][0];
+//              //echo "<br/>xxx: $string";
+//              $count_result1 = 0;
+////              while (@$result_team[$count_result1][0]) {
+////                  $count_result2 = 0;
+////                  echo "<br/>$count_result1: ";
+////                  while (@$result_team[$count_result1][$count_result2]) {
+////                      $string = $result_team[$count_result1][$count_result2];
+////                      echo "$string ";
+////                      $count_result2++;
+////                  }
+////                  $count_result1++;
+////              }
+//              for ($i = 0; $i < $count_team; $i++) {
+//                  $count_result2 = 0;
+//                  $x = 0;
+//                  if (@$result_team[$i][0]) {
+//                      while (@$result_team[$i][$count_result2]) {
+//                          $result_teamx[$count_result1][$x] = $result_team[$i][$count_result2];
+//                          $count_result2++;
+//                          $x++;
+//                      }
+//                      $count_result1++;
+//                  }
+//              }
+//              $count1 = 0;
+//              $count2 = 0;
+//              while (@$result_teamx[$count1][0]) {
+//                  $count2 = 0;
+//                  echo "$count1: ";
+//                  while (@$result_teamx[$count1][$count2]) {
+//                      $string = $result_teamx[$count1][$count2];
+//                      echo "$string ";
+//                      $count2++;
+//                  }
+//                  $count1++;
+//                  echo "<br/>";
+//              }
+//          } else {
+          ?>
+         <form class="form-them-nhiem-vu" method="post">
+            <div id="form-nhiem-vu-title">
+               <h2>them nv</h2>
+            </div>
+            <div id="form-nhiem-vu-ten" title="Tên Nhiệm Vụ">
+               <span class="input input--isao">
+                  <input class="input__field input__field--isao" type="text" id="nhiem-vu-ten" name="ten" />
+                  <label class="input__label input__label--isao" for="nhiem-vu-ten" data-content="Tên Nhiệm Vụ">
+                     <span class="input__label-content input__label-content--isao">Tên Nhiệm Vụ</span>
+                  </label>
+               </span>
+            </div>
+            <div id="form-nhiem-vu-mo-ta">
+               <label class="title">Mô tả nhiệm vụ</label>
+               <textarea style="overflow: hidden" data-autoresize rows="2" name="mota"  id="nhiem-vu-mo-ta">s</textarea>
+            </div>
+            <div id="form-nhiem-vu-skill"><label class="title">chon skill</label>
+                <?php
+                $res = @pg_query($conn, "Select jutsu_logo, jutsu_id from jutsu");
+                while ($row = @pg_fetch_row($res)) {
+                    echo "<label><input class = 'skill-chon' type='checkbox' name='skill[]' value='$row[1]' /><img src='$row[0]' height='40' width='40' class='img-circle'></label>";
+                }
+                ?>
+            </div>
+
+            <select id="example-movie" name="difficulty">
+               <option value="50">Siêu Dễ</option>
+               <option value="100">Dễ</option>
+               <option value="150" selected="selected">Trung Bình</option>
+               <option value="200">Khó</option>
+               <option value="250">Siêu Khó</option>
+            </select>
+
+            <div id="form-nhiem-vu-time">
+               <label class="title">thoi gian bat dau</label>
+               <input type="text" id="datetimepicker_dark" name="ninmu-time-start"/>
+            </div>
+            <div id="form-nhiem-vu-time">
+               <label class="title">thoi gian ket thuc</label>
+               <input type="text" id="datetimepicker_dark" name="ninmu-time-end"/>
+            </div>
+            <div id="form-nhiem-vu-lang"> <label class="title"><?php
 //                date_default_timezone_set('Asia/Saigon');
 //                $d1 = strtotime("26-10-2015 16:28");
 //                $today = date('Y-m-d H:i:s');
@@ -159,38 +316,223 @@ $id = @$_GET['id'];
 ////                $timezone = 'Asia/Saigon';
 ////                $dtUtcDate = strtotime($dateStr);
 ////                echo $dtUtcDate;
-                        ?></label>
-                   <label><input class = "lang-chon" type="radio" name="radio" value="la" /><img src="fb1.jpg" height="40" width="40" class="img-circle"></label>
-                   <label><input class = "lang-chon" type="radio" name="radio" value="da" /><img src="fb1.jpg" height="40" width="40" class="img-circle"></label>
-                   <label><input class = "lang-chon" type="radio" name="radio" value="suong" /><img src="fb1.jpg" height="40" width="40" class="img-circle"></label>
-                   <label><input class = "lang-chon" type="radio" name="radio" value="may" /><img src="fb1.jpg" height="40" width="40" class="img-circle"></label>
-                   <label><input class = "lang-chon" type="radio" name="radio" value="cat" /><img src="fb1.jpg" height="40" width="40" class="img-circle"></label>
-                </div>
-                <div class="submit"><input type="submit" value="submit" name="submit-button"/></div>
-             </form>
-             <?php
+                    ?></label>
+               <label><input class = "lang-chon" type="radio" name="radio" value="1" /><img src="fb1.jpg" height="40" width="40" class="img-circle"></label>
+               <label><input class = "lang-chon" type="radio" name="radio" value="4" /><img src="fb1.jpg" height="40" width="40" class="img-circle"></label>
+               <label><input class = "lang-chon" type="radio" name="radio" value="3" /><img src="fb1.jpg" height="40" width="40" class="img-circle"></label>
+               <label><input class = "lang-chon" type="radio" name="radio" value="5" /><img src="fb1.jpg" height="40" width="40" class="img-circle"></label>
+               <label><input class = "lang-chon" type="radio" name="radio" value="2" /><img src="fb1.jpg" height="40" width="40" class="img-circle"></label>
+            </div>
+            <div class="submit"><input type="submit" value="submit" name="submit-button"/></div>
+         </form>
+         <?php
+         //   }
+         if (@isset($_POST['submit-button'])) {
+             $ninmu_ten = $_POST['ten'];
+             $ninmu_mota = $_POST['mota'];
+             $ninmu_lang = $_POST['radio'];
+             $ninmu_skill = $_POST['skill'];
+             $ninmu_point = $_POST['difficulty'];
+             $ninmu_starttime = $_POST['ninmu-time-start'];
+             $ninmu_endtime = $_POST['ninmu-time-end'];
+             //echo "ten nhiem vu: $ninmu_ten</br>mo ta nhiem vu: $ninmu_mota</br>lang: $ninmu_lang</br>skill: $ninmu_skill[0], $ninmu_skill[1]</br>thoi gian ket thuc:$ninmu_endtime</br>thoi gian bat dau: $ninmu_starttime";
+             $end = date_create($ninmu_endtime);
+             $start = date_create($ninmu_starttime);
+             $time2 = date_diff($start, $end);
+             $s = $time2->format("day %d, hour %h, minutes %i");
+             $end2 = $start;
+             date_add($end2, $time2);
+             $end3 = date_format($end2, "Y-m-d H:i:m");
+             //echo "</br>thesecond: $s, ketthuc: $end3;</div>";
+//              $res = pg_query($conn, "insert into ninmu(ninmu_name, ninmu_teampoint, ninmu_time_start, ninmu_time_end, ninmu_description)"
+//                      . "values('$ninmu_ten', $ninmu_point, '$ninmu_starttime', '$ninmu_endtime', '$ninmu_mota')");
+//              
+             $count = 0;
+             $count_skill = 0;
+             while (@$ninmu_skill[$count_skill]) {
+                 echo "$ninmu_skill[$count_skill]: ";
+                 $res = pg_query($conn, "Select ninja_id from ninja natural join ninja_jutsu where jutsu_id = $ninmu_skill[$count_skill] order by ninja_cost asc");
+                 $i = 0;
+                 while ($row = @pg_fetch_row($res)) {
+                     echo "$row[0] ";
+                     $result_ninja[$count_skill][$i] = $row[0];
+                     $i++;
+                 }
+                 $count_skill++;
+                 echo "</br>";
+             }
+             $count_ninja = 0;
+             $count_team = 0;
+             $count_skill = 1;
+             $count_ninja0 = $count_ninja1 = $count_ninja2 = $count_ninja3 = $count_ninja4 = $count_ninja5 = $count_ninja6 = 0;
+//              while (@$result_ninja[0][$count_ninja]) {
+//                  $string = $result_ninja[0][$count_ninja];
+//                  echo "$string ";
+//                  while(@$result_ninja[$count_skill])
+//                      $n = 0;
+//                      while ($result_ninja[$i][$n]) {
+//                          $result_team[$count_team][0] = $result_ninja[0][$count_ninja];
+//                          $result_team[$count_team][$i] = $result_ninja[$i][$n];
+//                          $n++;
+//                      }
+//                  }
+//                  $count_ninja++;
+//              }
+             while (@$result_ninja[0][$count_ninja0]) {
+                 if (!@$result_team[$count_team - 1][0] && @$result_team[$count_team - 2][0]) {
+                     $count_team--;
+                 }
+                 $result_team[$count_team][0] = $result_ninja[0][$count_ninja0];
+                 $count_ninja1 = 0;
+                 if (!@$result_ninja[1][$count_ninja1]) {
+                     
+                 } else {
+                     while (@$result_ninja[1][$count_ninja1]) {
+                         $string = @$result_ninja[1][$count_ninja1];
+                         //echo "$count_ninja1 this $string team $count_team<br/>";
+                         if (!@$result_team[$count_team - 1][0] && @$result_team[$count_team - 2][0]) {
+                             $count_team--;
+                         }
+                         $result_team[$count_team][0] = $result_ninja[0][$count_ninja0];
+                         $result_team[$count_team][1] = $result_ninja[1][$count_ninja1];
+                         // echo "fuck $string1 $string2 </br>";
+                         $count_ninja2 = 0;
+                         if (!@$result_ninja[2][$count_ninja2]) {
+                             
+                         } else {
+                             while (@$result_ninja[2][$count_ninja2]) {
+                                 if (!@$result_team[$count_team - 1][0] && @$result_team[$count_team - 2][0]) {
+                                     $count_team--;
+                                 }
+                                 $result_team[$count_team][0] = $result_ninja[0][$count_ninja0];
+                                 $result_team[$count_team][1] = $result_ninja[1][$count_ninja1];
+                                 $result_team[$count_team][2] = $result_ninja[2][$count_ninja2];
+                                 //   echo "team $count_team<br/>";
+                                 // echo "$count_team: $string1 $string2 $string3</br>";
+                                 $count_ninja3 = 0;
+                                 if (!@$result_ninja[3][$count_ninja3]) {
+                                     
+                                 } else {
+                                     while (@$result_ninja[3][$count_ninja3]) {
+                                         if (!@$result_team[$count_team - 1][0] && @$result_team[$count_team - 2][0]) {
+                                             $count_team--;
+                                         }
+                                         $result_team[$count_team][0] = $result_ninja[0][$count_ninja0];
+                                         $result_team[$count_team][1] = $result_ninja[1][$count_ninja1];
+                                         $result_team[$count_team][2] = $result_ninja[2][$count_ninja2];
+                                         $result_team[$count_team][3] = $result_ninja[3][$count_ninja3];
+                                         $count_ninja4 = 0;
+                                         if (!@$result_ninja[4][$count_ninja4]) {
+                                             
+                                         } else {
+                                             while (@$result_ninja[4][$count_ninja4]) {
+                                                 if (!@$result_team[$count_team - 1][0] && @$result_team[$count_team - 2][0]) {
+                                                     $count_team--;
+                                                 }
+
+                                                 $result_team[$count_team][0] = $result_ninja[0][$count_ninja0];
+                                                 $result_team[$count_team][1] = $result_ninja[1][$count_ninja1];
+                                                 $result_team[$count_team][2] = $result_ninja[2][$count_ninja2];
+                                                 $result_team[$count_team][3] = $result_ninja[3][$count_ninja3];
+                                                 $result_team[$count_team][4] = $result_ninja[4][$count_ninja4];
+                                                 $count_ninja5 = 0;
+                                                 if (!@$result_ninja[5][$count_ninja5]) {
+                                                     
+                                                 } else {
+                                                     while (@$result_ninja[5][$count_ninja5]) {
+                                                         if (!@$result_team[$count_team - 1][0] && @$result_team[$count_team - 2][0]) {
+                                                             $count_team--;
+                                                         }
+                                                         $result_team[$count_team][0] = $result_ninja[0][$count_ninja0];
+                                                         $result_team[$count_team][1] = $result_ninja[1][$count_ninja1];
+                                                         $result_team[$count_team][2] = $result_ninja[2][$count_ninja2];
+                                                         $result_team[$count_team][3] = $result_ninja[3][$count_ninja3];
+                                                         $result_team[$count_team][4] = $result_ninja[4][$count_ninja4];
+                                                         $result_team[$count_team][5] = $result_ninja[5][$count_ninja5];
+                                                         $count_ninja6 = 0;
+                                                         if (!@$result_ninja[6][$count_ninja6]) {
+                                                             
+                                                         } else {
+                                                             while (@$result_ninja[6][$count_ninja6]) {
+                                                                 if (!@$result_team[$count_team - 1][0] && @$result_team[$count_team - 2][0]) {
+                                                                     $count_team--;
+                                                                 }
+
+                                                                 $result_team[$count_team][0] = $result_ninja[0][$count_ninja0];
+                                                                 $result_team[$count_team][1] = $result_ninja[1][$count_ninja1];
+                                                                 $result_team[$count_team][2] = $result_ninja[2][$count_ninja2];
+                                                                 $result_team[$count_team][3] = $result_ninja[3][$count_ninja3];
+                                                                 $result_team[$count_team][4] = $result_ninja[4][$count_ninja4];
+                                                                 $result_team[$count_team][5] = $result_ninja[5][$count_ninja5];
+                                                                 $result_team[$count_team][6] = $result_ninja[6][$count_ninja6];
+                                                                 $count_team++;
+                                                                 $count_ninja6++;
+                                                             }
+                                                         } $count_team++;
+                                                         $count_ninja5++;
+                                                     }
+                                                 } $count_team++;
+                                                 $count_ninja4++;
+                                             }
+                                         } $count_team++;
+                                         $count_ninja3++;
+                                     }
+                                 }
+                                 $count_team++;
+                                 $count_ninja2++;
+                             }
+                         }
+                         $count_team++;
+                         $count_ninja1++;
+                     }
+                 }
+                 $count_team++;
+                 $count_ninja0++;
+             }
+             //echo "countteam $count_team<br/>";
+             //  $string = $result_team[6][0];
+             //echo "<br/>xxx: $string";
+             $count_result1 = 0;
+//              while (@$result_team[$count_result1][0]) {
+//                  $count_result2 = 0;
+//                  echo "<br/>$count_result1: ";
+//                  while (@$result_team[$count_result1][$count_result2]) {
+//                      $string = $result_team[$count_result1][$count_result2];
+//                      echo "$string ";
+//                      $count_result2++;
+//                  }
+//                  $count_result1++;
+//              }
+             echo "team: $count_team<br/>";
+             for ($i = 0; $i < $count_team; $i++) {
+                 $count_result2 = 0;
+                 $x = 0;
+                 if (@$result_team[$i][0]) {
+                     while (@$result_team[$i][$count_result2]) {
+                         $result_teamx[$count_result1][$x] = $result_team[$i][$count_result2];
+                         $count_result2++;
+                         $x++;
+                     }
+                     $count_result1++;
+                 }
+             }
+             $count1 = 0;
+             $count2 = 0;
+             while (@$result_teamx[$count1][0]) {
+                 $count2 = 0;
+                 echo "$count1: ";
+                 while (@$result_teamx[$count1][$count2]) {
+                     $string = $result_teamx[$count1][$count2];
+                     echo "$string ";
+                     $count2++;
+                 }
+                 $count1++;
+                 echo "<br/>";
+             }
          }
          ?>
 
       </div>
-
-
-<pre>
-<code>
-$('#example').barrating('show', {
-  theme: 'my-awesome-theme'
-  onSelect: function(value, text, event) {
-    if (typeof(event) !== 'undefined') {
-      // rating was selected by a user
-      console.log(event.target);
-    } else {
-      // rating was selected programmatically
-      // by calling `set` method
-    }
-  }
-});
-</code>
-</pre>
       <script src="js/jquery-2.1.4.min.js"></script>
       <script src="js/main.js"></script>
       <script src="js/classie.js"></script>
