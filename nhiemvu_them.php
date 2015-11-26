@@ -389,13 +389,11 @@ $id = @$_GET['id'];
                  } else {
                      while (@$result_ninja[1][$count_ninja1]) {
                          $string = @$result_ninja[1][$count_ninja1];
-                         //echo "$count_ninja1 this $string team $count_team<br/>";
                          if (!@$result_team[$count_team - 1][0] && @$result_team[$count_team - 2][0]) {
                              $count_team--;
                          }
                          $result_team[$count_team][0] = $result_ninja[0][$count_ninja0];
                          $result_team[$count_team][1] = $result_ninja[1][$count_ninja1];
-                         // echo "fuck $string1 $string2 </br>";
                          $count_ninja2 = 0;
                          if (!@$result_ninja[2][$count_ninja2]) {
                              
@@ -407,8 +405,6 @@ $id = @$_GET['id'];
                                  $result_team[$count_team][0] = $result_ninja[0][$count_ninja0];
                                  $result_team[$count_team][1] = $result_ninja[1][$count_ninja1];
                                  $result_team[$count_team][2] = $result_ninja[2][$count_ninja2];
-                                 //   echo "team $count_team<br/>";
-                                 // echo "$count_team: $string1 $string2 $string3</br>";
                                  $count_ninja3 = 0;
                                  if (!@$result_ninja[3][$count_ninja3]) {
                                      
@@ -489,20 +485,7 @@ $id = @$_GET['id'];
                  $count_team++;
                  $count_ninja0++;
              }
-             //echo "countteam $count_team<br/>";
-             //  $string = $result_team[6][0];
-             //echo "<br/>xxx: $string";
              $count_result1 = 0;
-//              while (@$result_team[$count_result1][0]) {
-//                  $count_result2 = 0;
-//                  echo "<br/>$count_result1: ";
-//                  while (@$result_team[$count_result1][$count_result2]) {
-//                      $string = $result_team[$count_result1][$count_result2];
-//                      echo "$string ";
-//                      $count_result2++;
-//                  }
-//                  $count_result1++;
-//              }
              echo "team: $count_team<br/>";
              for ($i = 0; $i < $count_team; $i++) {
                  $count_result2 = 0;
