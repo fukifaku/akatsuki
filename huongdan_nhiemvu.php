@@ -60,7 +60,7 @@ $id = @$_GET['id'];
                <ul>
                   <li id='thong-tin'><a href="taikhoan_thongtin.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Thông tin</a></li>
                   <li id='ngan-quy'><a href="taikhoan_nganquy.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Ngân Quỹ</a></li>
-                  <li id='dang-xuat'><a href='user_program.php'>Đăng xuất</a></li>
+                  <li id='dang-xuat'><a href='index.php'>Đăng xuất</a></li>
                </ul>
             </li>
             <li  class ="active">

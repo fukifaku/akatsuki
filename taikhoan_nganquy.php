@@ -42,33 +42,33 @@ $id = @$_GET['id'];
             <li>
                <h2><span class="icon-mission"></span>Nhiệm vụ</h2>
                <ul>
-                  <li id="them-nhiem-vu"><a href="nhiemvu_them.php?id=<?php echo $id?>&pass=<?php echo $pass?>" >Thêm nhiệm vụ</a></li>
-                  <li id='lich-su-nhiem-vu'><a href="nhiemvu_lichsu.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Lịch sử nhiệm vụ</a></li>
+                  <li id="them-nhiem-vu"><a href="nhiemvu_them.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>" >Thêm nhiệm vụ</a></li>
+                  <li id='lich-su-nhiem-vu'><a href="nhiemvu_lichsu.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Lịch sử nhiệm vụ</a></li>
                </ul>
             </li>
             <li>
                <h2><span class="icon-tasks"></span>Ninja</h2>
                <ul>
-                  <li id="xep-hang"><a href="ninja_xephang.php?id=<?php echo $id?>&pass=<?php echo $pass?>" >Bảng xếp hạng</a></li>
-                  <li id="ho-so"><a href="ninja_hoso.php?id=<?php echo $id?>&pass=<?php echo $pass?>" >Hồ sơ Ninja</a></li>
-                  <li id='trang-thai'><a href="ninja_trangthai.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Trạng thái</a></li>
-                  <li id='yeu-thich'><a href="ninja_yeuthich.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Yêu thích</a></li>
+                  <li id="xep-hang"><a href="ninja_xephang.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>" >Bảng xếp hạng</a></li>
+                  <li id="ho-so"><a href="ninja_hoso.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>" >Hồ sơ Ninja</a></li>
+                  <li id='trang-thai'><a href="ninja_trangthai.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Trạng thái</a></li>
+                  <li id='yeu-thich'><a href="ninja_yeuthich.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Yêu thích</a></li>
                </ul>
             </li>
             <li class ="active">
                <h2><span class="icon-calendar"></span>Tài khoản</h2>
                <ul>
-                  <li id='thong-tin'><a href="taikhoan_thongtin.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Thông tin</a></li>
-                  <li id='ngan-quy'  class ="active"><a href="taikhoan_nganquy.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Ngân Quỹ</a></li>
+                  <li id='thong-tin'><a href="taikhoan_thongtin.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Thông tin</a></li>
+                  <li id='ngan-quy'  class ="active"><a href="taikhoan_nganquy.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Ngân Quỹ</a></li>
                   <li id='dang-xuat'><a href='user_program.php'>Đăng xuất</a></li>
                </ul>
             </li>
             <li>
                <h2><span class="icon-heart"></span>Hướng dẫn</h2>
                <ul>
-                  <li id='hd-nhiemvu'><a href="huongdan_nhiemvu.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Nhiệm Vụ</a></li>
-                  <li id='hd-ninja'><a href="huongdan_ninja.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Ninja</a></li>
-                  <li id='hd-taikhoan'><a href="huongdan_taikhoan.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Tài khoản</a></li>
+                  <li id='hd-nhiemvu'><a href="huongdan_nhiemvu.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Nhiệm Vụ</a></li>
+                  <li id='hd-ninja'><a href="huongdan_ninja.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Ninja</a></li>
+                  <li id='hd-taikhoan'><a href="huongdan_taikhoan.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Tài khoản</a></li>
                </ul>
             </li>
          </ul>
@@ -76,19 +76,59 @@ $id = @$_GET['id'];
       <div id ="bang-thong-tin">
 
          <?php
-         $res = @pg_query($conn, "select customer_avatar from customer where customer_username = '$id'");
+         $res = @pg_query($conn, "select customer_money from customer where customer_id = "
+                         . "(select customer_id from customer where customer_username = '$id')");
 
-          $row = @pg_fetch_row($res);
-            echo "<img src='$row[0]' height = '200' weight= '200'/>xxx";
+         $row = @pg_fetch_row($res);
+         echo "Ngan quy con: $row[0] <br/>";
 
-      ?>
-   </div>
+         $res = @pg_query($conn, "select money_time, money_amount from customer_money where customer_id = "
+                         . "(select customer_id from customer where customer_username = '$id')");
+         while (@$row = @pg_fetch_row($res)) {
+             echo "$row[0], $row[1] <br/>";
+         }
+         ?>
+         <a class ="btn btn-big" href ="#modal-one"><img src = "avatar_ninja/hinata.jpg" height="30px" width="30px"></a>
+         <a href="#" class="modal" id="modal-one" aria-hidden="true"></a>
+         <div class="modal-dialog">
+            <form class ="nap-the" method="post">
+               <span class="input input--kohana">
+                  <input class="input__field input__field--kohana" type="text" id="input-29" name="the"/>
+                  <label class="input__label input__label--kohana" for="input-29">
+                     <i class="fa fa-fw fa-clock-o icon icon--kohana"></i>
+                     <span class="input__label-content input__label-content--kohana">Thẻ</span>
+                  </label>
+               </span>
+               <div class="submit">
+                  <input type="submit" value="submit" name="submit-button"/>
+               </div>
+            </form>
+            <?php
+            if (@isset($_POST['submit-button'])) {
+                $the = $_POST['the'];
+                $res = @pg_query($conn, "select card_value from card where card_id ='$the'");
+                $row=@pg_fetch_row($res);
+                if(!$row[0]){
+                    echo "wrong card";
+                } else {
+                    $res = @pg_query($conn, "select customer_id from customer where customer_username = '$id'");
+                    $row2 = @pg_fetch_row($res);
+                    $today = date('Y-m-d H:i:s');
+                    $res = pg_query($conn, "insert into customer_money values('$row2[0]','$today', '$row[0]')");
+                    $res = pg_query($conn, "delete from card where card_id = '$the' ");
+                  //  header("Location: taikhoan_nganquy.php?id=$id&pass=$pass");
+                }
+            }
+            ?>
+         </div>
 
-   <script src="js/jquery-2.1.4.min.js"></script>
-   <script src="js/main.js"></script>
-   <script src="js/classie.js"></script>
-   <script src="js/jquery.datetimepicker.full.js"></script>
-</body>
+      </div>
+
+      <script src="js/jquery-2.1.4.min.js"></script>
+      <script src="js/main.js"></script>
+      <script src="js/classie.js"></script>
+      <script src="js/jquery.datetimepicker.full.js"></script>
+   </body>
 
 </html>
 
