@@ -8,11 +8,20 @@ body {
     color: white;
     font-family: Verdana;
 }
-
 .img-circle {
     border-radius: 50%;
 }
-
+.img-radius {
+    border-radius: 15%;
+}
+input {
+    background-color: #454751;
+    color: white;
+}
+textarea {
+    background-color: #454751;
+    color: white;
+}
 .ninja-font {
     font-family: 'last ninja';
     color: black;
@@ -111,7 +120,7 @@ body {
 }
 #bang-them-nhiem-vu {
     // display: none;
-    margin: 30px auto auto 340px;
+    margin: 30px auto 60px 340px;
     width: 700px;
     background-color: #343642;
     box-shadow: 
@@ -119,7 +128,7 @@ body {
         0 0 200px 1px rgba(255, 255, 255, 0.5);
 }
 #bang-ho-so{
-    margin: 30px auto auto 340px;
+    margin: 30px auto 60px 340px;
     width: 800px;
     background-color: #343642;
     box-shadow: 
@@ -128,9 +137,33 @@ body {
     //  display: none;
     // background-color: #002535;
 }
+/*#bang-ninja {
+    margin: 30px auto 60px 340px;
+    width: 800px;
+    background-color: #343642;
+    box-shadow: 
+        0 5px 15px 1px rgba(0, 0, 0, 0.6), 
+        0 0 200px 1px rgba(255, 255, 255, 0.5);
+}
+
+#bang-ninja-avatar {
+    margin-left: 20px;
+    float: left;
+    margin-top : 30px;
+    //display: block;
+    width: 250px;
+}
+
+#bang-ninja-thong-tin {
+    margin-top: -20px;
+    float: left;
+    margin-left: 20px;
+    width: 300px;
+}*/
+
 #bang-xep-hang {
     //  display: none;
-    margin: 30px auto auto 340px;
+    margin: 30px auto 60px 340px;
     width: 700px;
     background-color: #343642;
     box-shadow: 
@@ -141,7 +174,7 @@ body {
 #bang-thong-tin {
     //  display: none;
     padding: 40px; 
-    margin: 30px auto auto 340px;
+    margin: 30px auto 60px 340px;
     width: 700px;
     height: 450px;
     background-color: #343642;
@@ -158,6 +191,39 @@ body {
     box-shadow: 
         0 5px 15px 1px rgba(0, 0, 0, 0.6), 
         0 0 200px 1px rgba(255, 255, 255, 0.5);
+}
+#bang-ninja {
+    margin: 30px auto 60px 340px;
+    width: 800px;
+    height: 1000px;
+    background-color: #343642;
+    //border: 5px #454751 solid;
+    box-shadow: 
+        0 5px 15px 1px rgba(0, 0, 0, 0.6), 
+        0 0 200px 1px rgba(255, 255, 255, 0.5);
+}
+#bang-ninja-background {
+    
+}
+#bang-ninja-avatar {
+    position: absolute;
+    text-align: center;
+    line-height: 30px;
+    margin-left: 20px;
+    float: left;
+    margin-top : -100px;
+    //display: block;
+    width: 200px;
+    color: white;
+}
+#bang-ninja-thong-tin {
+    position: absolute;
+    line-height: 25px;
+    font-family: Calibri;
+    float: left;
+    margin: 10px auto auto 250px;
+    width: 430px;
+    color: white;
 }
 #ngan-quy-x {
     margin-left: 150px;
@@ -227,7 +293,18 @@ body {
     font-size: 1rem;
     color: white;
 }
-
+#submit-nhiem-vu {
+    text-align: center;
+    margin-bottom: 10px;
+}
+#submit-nhiem-vu-x {
+    margin-top: 20px;
+    text-align: center;
+    background-color: #D85269;
+    width: 200px;
+    padding: 8px;
+    margin-bottom: 30px;
+}
 .table-hover > tbody > tr:hover {
     background-color: #D85269;
     border-left: 5px solid lightgreen;
@@ -379,6 +456,8 @@ body {
 }
 
 #form-nhiem-vu-title {
+    margin-top: 10px;
+    padding: 10px;
     padding-left: 12px;
     width: 700px;
     height: 40px;
@@ -387,18 +466,26 @@ body {
 
 #form-nhiem-vu-ten {
     margin: 20px;
+    margin-left: 160px;
 }
-
+#form-nhiem-vu-difficulty {
+    margin-top: -20px;
+    margin-left: 180px;
+}
 #form-nhiem-vu-mo-ta {
+    //background-color: #454751;
     margin: 20px;
 }
 
 #form-nhiem-vu-skill {
     margin: 20px;
+    margin-top: 50px;
+    margin-left: 110px;
 }
 
 #form-nhiem-vu-lang {
     margin: 20px;
+    margin-left: 185px;
 }
 
 #form-nhiem-vu-sl-ninja {
@@ -417,8 +504,15 @@ label .skill-chon + img{
     cursor:pointer;
     border:2px solid transparent;
 }
+label .skill-chon:hover +img,
 label .skill-chon:checked + img{
-    border:2px solid #f00;
+    border:5px solid #D85269;
+    -moz-box-shadow: rgba(255, 255, 255, 0.4) 0 1px, inset 0 20px 20px -10px white;
+    -webkit-box-shadow: rgba(255, 255, 255, 0.4) 0 1px, inset 0 20px 20px -10px white;
+    box-shadow: rgba(255, 255, 255, 0.4) 0 1px, inset 0 20px 20px -10px white;
+    -moz-box-shadow: rgba(255, 255, 255, 0.4) 0 1px, inset 0 20px 20px -10px white;
+    -webkit-box-shadow: rgba(255, 255, 255, 0.4) 0 1px, inset 0 20px 20px -10px white;
+    box-shadow: rgba(255, 255, 255, 0.4) 0 1px, inset 0 20px 20px -10px white;
 }
 
 label .lang-chon{ 
@@ -429,11 +523,18 @@ label .lang-chon + img{
     cursor:pointer;
     border:2px solid transparent;
 }
+label .lang-chon:hover + img,
 label .lang-chon:checked + img{
-    border:2px solid #f00;
+    border:5px solid #D85269;
+    -moz-box-shadow: rgba(255, 255, 255, 0.4) 0 1px, inset 0 20px 20px -10px white;
+    -webkit-box-shadow: rgba(255, 255, 255, 0.4) 0 1px, inset 0 20px 20px -10px white;
+    box-shadow: rgba(255, 255, 255, 0.4) 0 1px, inset 0 20px 20px -10px white;
+    -moz-box-shadow: rgba(255, 255, 255, 0.4) 0 1px, inset 0 20px 20px -10px white;
+    -webkit-box-shadow: rgba(255, 255, 255, 0.4) 0 1px, inset 0 20px 20px -10px white;
+    box-shadow: rgba(255, 255, 255, 0.4) 0 1px, inset 0 20px 20px -10px white;
 }
 //-------------------ISAO
-.input__label {
+/*.input__label {
     display: inline-block;
     float: right;
     padding: 0 1em;
@@ -448,66 +549,7 @@ label .lang-chon:checked + img{
     -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-}
-
-.input__field--isao {
-    z-index: 10;
-    padding: 0.75em 0.1em 0.25em;
-    width: 100%;
-    background: transparent;
-    color: white;
-}
-
-.input__label--isao {
-    position: relative;
-    overflow: hidden;
-    padding: 0;
-    width: 100%;
-    color: white;
-    text-align: left;
-    font-weight: normal;
-}
-
-.input__label--isao::before {
-
-    content: '';
-    position: absolute;
-    top: 0;
-    width: 100%;
-    height: 7px;
-    background: white;
-    -webkit-transform: scale3d(1, 0.4, 1);
-    transform: scale3d(1, 0.4, 1);
-    -webkit-transform-origin: 50% 100%;
-    transform-origin: 50% 100%;
-    -webkit-transition: -webkit-transform 0.3s, background-color 0.3s;
-    transition: transform 0.3s, background-color 0.3s;
-    -webkit-transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
-    transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
-}
-
-.input__label--isao::after {
-    content: attr(data-content);
-    position: absolute;
-    top: 0;
-    left: 0;
-    padding: 0.75em 0.15em;
-    color: #D85269;
-    opacity: 0;
-    -webkit-transform: translate3d(0, 50%, 0);
-    transform: translate3d(0, 50%, 0);
-    -webkit-transition: opacity 0.3s, -webkit-transform 0.3s;
-    transition: opacity 0.3s, transform 0.3s;
-    -webkit-transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
-    transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
-    pointer-events: none;
-}
-
-.input__field--isao:focus + .input__label--isao::before {
-    background-color: #D85269;
-    -webkit-transform: scale3d(1, 1, 1);
-    transform: scale3d(1, 1, 1);
-}
+}*/
 
 .input--kohana {
     overflow: hidden;
@@ -578,11 +620,6 @@ textarea {
     box-sizing: border-box;
     resize: none;
 }
-
-.input--makiko {
-    margin-left: 100px;
-}
-
 .form-thong-tin {
     width: fit-content;
 }
@@ -706,4 +743,120 @@ textarea {
     height: 40px;
     font-size: 16px;
     font-size: 1rem;
+}
+//kuro
+
+.input--kuro {
+	max-width: 320px;
+	margin-bottom: 3em;
+}
+
+.input__field--kuro {
+	width: 100%;
+	background: transparent;
+	color: white;
+	opacity: 0;
+	text-align: center;
+	-webkit-transition: opacity 0.3s;
+	transition: opacity 0.3s;
+}
+
+.input__label--kuro {
+    padding-left: 130px;
+	position: absolute;
+	left: 0;
+	width: 100%;
+	color: #D85269;
+	pointer-events: none;
+}
+
+.input__label--kuro::before,
+.input__label--kuro::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 50%;
+	height: 100%;
+	//border: 4px solid #747981;
+        border: 4px solid white;
+	-webkit-transition: -webkit-transform 0.3s;
+	transition: transform 0.3s;
+}
+
+.input__label--kuro::before {
+	border-right: none;
+}
+
+.input__label--kuro::after {
+	left: 50%;
+	border-left: none;
+}
+
+.input__field--kuro:focus,
+.input--filled .input__field--kuro {
+	opacity: 1;
+	-webkit-transition-delay: 0.3s;
+	transition-delay: 0.3s;
+}
+
+.input__field--kuro:focus + .input__label--kuro::before,
+.input--filled .input__label--kuro::before {
+	-webkit-transform: translate3d(-10%, 0, 0);
+	transform: translate3d(-10%, 0, 0);
+}
+
+.input__field--kuro:focus + .input__label--kuro::after,
+.input--filled .input__label--kuro::after {
+	-webkit-transform: translate3d(10%, 0, 0);
+	transform: translate3d(10%, 0, 0);
+}
+
+.input__field--kuro:focus + .input__label--kuro .input__label-content--kuro,
+.input--filled .input__label-content--kuro {
+	-webkit-animation: anim-2 0.3s forwards;
+	animation: anim-2 0.3s forwards;
+}
+
+@-webkit-keyframes anim-2 {
+	50% {
+		opacity: 0;
+		-webkit-transform: scale3d(0.3, 0.3, 1);
+		transform: scale3d(0.3, 0.3, 1);
+	}
+	51% {
+		opacity: 0;
+		-webkit-transform: translate3d(0, 3.7em, 0) scale3d(0.3, 0.3, 1);
+		transform: translate3d(0, 3.7em, 0) scale3d(0.3, 0.3, 1);
+	}
+	100% {
+		opacity: 1;
+		-webkit-transform: translate3d(0, 3.7em, 0);
+		transform: translate3d(0, 3.7em, 0);
+	}
+}
+
+@keyframes anim-2 {
+	50% {
+		opacity: 0;
+		-webkit-transform: scale3d(0.3, 0.3, 1);
+		transform: scale3d(0.3, 0.3, 1);
+	}
+	51% {
+		opacity: 0;
+		-webkit-transform: translate3d(0, 3.7em, 0) scale3d(0.3, 0.3, 1);
+		transform: translate3d(0, 3.7em, 0) scale3d(0.3, 0.3, 1);
+	}
+	100% {
+		opacity: 1;
+		-webkit-transform: translate3d(0, 3.7em, 0);
+		transform: translate3d(0, 3.7em, 0);
+	}
+}
+
+.bg{
+    border: 5px white solid;
+}
+.av{
+    border: 5px white solid;
 }

@@ -224,8 +224,8 @@ $(document).ready(function () {
         }
     })();
     //time
-    $('#datetimepicker_dark').datetimepicker({theme: 'dark'});
-
+    $('#datetimepicker_dark').datetimepicker();
+    $('#datetimepicker_dark2').datetimepicker();
 });
 
 jQuery.each(jQuery('textarea[data-autoresize]'), function () {

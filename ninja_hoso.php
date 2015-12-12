@@ -72,234 +72,302 @@ $id = @$_GET['id'];
             </li>
          </ul>
       </div>
+      <?php
+      $pass = @$_GET['pass'];
+      $id = @$_GET['id'];
+      $ninja_id = @$_GET['ninja'];
+      if (!isset($_GET['ninja'])) {
+          ?>
+          <div id="bang-ho-so">
 
-      <div id="bang-ho-so">
-
-         <form class="form-ho-so" method="post">
-            <section class="content">
-               <span class="input input--makiko">
-                  <input class="input__field input__field--makiko" type="text" id="input-16" name="search" />
-                  <label class="input__label input__label--makiko" for="input-16">
-                     <span class="input__label-content input__label-content--makiko">Search</span>
-                  </label>
-                  <input type="submit" style="position: absolute; left: -9999px" name="submit-button"/>
-               </span>
-            </section>
-         </form>
-         <?php
-         if (@$_POST['submit-button']) {
-             ?>
-         <div id="hoso-head-row">
-            <div class="col-take-0-8">Làng</div>
-            <div class="col-take-0-8">Avatar</div>
-            <div class="col-take-1-6">Tên</div>
-            <div class="col-take-2">Thông Tin</div>
-            <div class="col-take-2">Kĩ Năng</div>
-            <div class="col-take-0-7">Điểm</div>
-         </div>
-         <?php
-             $count_all = 0;
-             $a = @$_POST['search'];
-             $res = pg_query($conn, "select ninja_id, ninja_name from ninja");
-             $count = 0;
-             $ninja_id_temp[-1] = 1000;
-             while ($row = pg_fetch_row($res)) {
-                 if ($ninja_id_temp[$count - 1] != $row[0]) {
-                     if (stripos($row[1], $a) ||stripos($row[1], $a)===0) {
-                         $ninja_id_temp[$count++] = $row[0];
-                         $result_all[$count_all++] = $row[0];
+             <form class="form-ho-so" method="post">
+                <section class="content">
+                   <span class="input input--makiko">
+                      <input class="input__field input__field--makiko" type="text" id="input-16" name="search" />
+                      <label class="input__label input__label--makiko" for="input-16">
+                         <span class="input__label-content input__label-content--makiko">Search</span>
+                      </label>
+                      <input type="submit" style="position: absolute; left: -9999px" name="submit-button"/>
+                   </span>
+                </section>
+             </form>
+             <?php
+             if (@$_POST['submit-button']) {
+                 ?>
+                 <div id="hoso-head-row">
+                    <div class="col-take-0-8">Làng</div>
+                    <div class="col-take-0-8">Avatar</div>
+                    <div class="col-take-1-6">Tên</div>
+                    <div class="col-take-2">Thông Tin</div>
+                    <div class="col-take-2">Kĩ Năng</div>
+                    <div class="col-take-0-7">Điểm</div>
+                 </div>
+                 <?php
+                 $count_all = 0;
+                 $a = @$_POST['search'];
+                 $res = pg_query($conn, "select ninja_id, ninja_name from ninja");
+                 $count = 0;
+                 $ninja_id_temp[-1] = 1000;
+                 while ($row = pg_fetch_row($res)) {
+                     if ($ninja_id_temp[$count - 1] != $row[0]) {
+                         if (stripos($row[1], $a) || stripos($row[1], $a) === 0) {
+                             $ninja_id_temp[$count++] = $row[0];
+                             $result_all[$count_all++] = $row[0];
+                         }
                      }
                  }
-             }
-             for ($k = 0; $k < $count; $k ++) {
-                 $ninja_id_tmp = $ninja_id_temp[$k];
-                 $res = pg_query($conn, "select distinct ninja_id, ninja_avatar, ninja_name, ninja_intro, ninja_point, sato_logo, jutsu_logo from ninja
+                 for ($k = 0; $k < $count; $k ++) {
+                     $ninja_id_tmp = $ninja_id_temp[$k];
+                     $res = pg_query($conn, "select distinct ninja_id, ninja_avatar, ninja_name, ninja_intro, ninja_point, sato_logo, jutsu_logo from ninja
                                         join ninja_jutsu using (ninja_id)
                                         join jutsu using (jutsu_id)
                                         join sato_ninja using (ninja_id)
                                         join sato using(sato_id)
                                         where ninja_id = $ninja_id_tmp
                                         ");
-                 $i = 0;
-                 while ($row = pg_fetch_row($res)) {
-                     $ninja_name = $row[2];
-                     $ninja_avatar = $row[1];
-                     $ninja_intro = $row[3];
-                     $intro_print = substr($ninja_intro, 0 , 45);
-                     $ninja_point = $row[4];
-                     $jutsu_logo[$i++] = $row[6];
-                     $sato_logo = $row[5];
-                 }
+                     $i = 0;
+                     while ($row = pg_fetch_row($res)) {
+                         $ninja_name = $row[2];
+                         $ninja_avatar = $row[1];
+                         $ninja_intro = $row[3];
+                         $intro_print = substr($ninja_intro, 0, 45);
+                         $ninja_point = $row[4];
+                         $jutsu_logo[$i++] = $row[6];
+                         $sato_logo = $row[5];
+                     }
 
-                 echo "<div class ='ninja-row-2'>
-                        <div class = 'col-take-0-8'><img src = $sato_logo height='40' width='40' class='img-circle'/></div> 
+                     echo "<a href='ninja_hoso.php?id=$id&pass=$pass&ninja=$ninja_id_tmp'><div class ='ninja-row-2'>
+                        <div class = 'col-take-0-8'><img src = $sato_logo height='40' width='40' class='img-radius'/></div> 
 			<div class = 'col-take-0-8'><img src = $ninja_avatar height='40' width='40' class='img-circle'/></div>
 			<div class = 'col-take-1-6'><b>$ninja_name</b></div> 
                         <div class = 'col-take-2'>$intro_print ...</div>";
-                 echo "<div class = 'col-take-2'>";
-                 for ($j = 0; $j < $i; $j++) {
-                     $img = @$jutsu_logo[$j];
-                     echo "<img src = $img height='40' width='40' class='img-circle'/>&nbsp;";
+                     echo "<div class = 'col-take-2'>";
+                     for ($j = 0; $j < $i; $j++) {
+                         $img = @$jutsu_logo[$j];
+                         echo "<img src = $img height='40' width='40' class='img-circle'/>&nbsp;";
+                     }
+                     echo "</div><div class = 'col-take-0-7'>$ninja_point</div></div></a>";
                  }
-                 echo "</div><div class = 'col-take-0-7'>$ninja_point</div></div>";
-             }
-             $res = pg_query($conn, "select ninja_id, sato_name from ninja
+                 $res = pg_query($conn, "select ninja_id, sato_name from ninja
                                         join sato_ninja using (ninja_id)
                                         join sato using(sato_id)
                                         ");
-             $count = 0;
-             $ninja_id_temp[-1] = 1000;
-             $kt = 0;
-             while ($row = pg_fetch_row($res)) {
-                 if ($ninja_id_temp[$count - 1] != $row[0]) {
-                     for($u = 0; $u < $count_all;$u++){
-                         if($result_all[$u]==$row[0]) $kt = 1;
-                     } if($kt == 0) {
-                        if (stripos($row[1], $a) ||stripos($row[1], $a)===0) {
-                         $ninja_id_temp[$count++] = $row[0];
-                         $result_all[$count_all++] = $row[0];
-                        }
+                 $count = 0;
+                 $ninja_id_temp[-1] = 1000;
+                 $kt = 0;
+                 while ($row = pg_fetch_row($res)) {
+                     if ($ninja_id_temp[$count - 1] != $row[0]) {
+                         for ($u = 0; $u < $count_all; $u++) {
+                             if ($result_all[$u] == $row[0])
+                                 $kt = 1;
+                         } if ($kt == 0) {
+                             if (stripos($row[1], $a) || stripos($row[1], $a) === 0) {
+                                 $ninja_id_temp[$count++] = $row[0];
+                                 $result_all[$count_all++] = $row[0];
+                             }
+                         }
                      }
                  }
-             }
-             for ($k = 0; $k < $count; $k ++) {
-                 $ninja_id_tmp = $ninja_id_temp[$k];
-                 $res = pg_query($conn, "select distinct ninja_id, ninja_avatar, ninja_name, ninja_intro, ninja_point, sato_logo, jutsu_logo from ninja
+                 for ($k = 0; $k < $count; $k ++) {
+                     $ninja_id_tmp = $ninja_id_temp[$k];
+                     $res = pg_query($conn, "select distinct ninja_id, ninja_avatar, ninja_name, ninja_intro, ninja_point, sato_logo, jutsu_logo from ninja
                                         join ninja_jutsu using (ninja_id)
                                         join jutsu using (jutsu_id)
                                         join sato_ninja using (ninja_id)
                                         join sato using(sato_id)
                                         where ninja_id = $ninja_id_tmp
                                         ");
-                 $i = 0;
-                 while ($row = pg_fetch_row($res)) {
-                     $ninja_name = $row[2];
-                     $ninja_avatar = $row[1];
-                     $ninja_intro = $row[3];
-                     $intro_print = substr($ninja_intro, 0 , 40);
-                     $ninja_point = $row[4];
-                     $jutsu_logo[$i++] = $row[6];
-                     $sato_logo = $row[5];
-                 }
+                     $i = 0;
+                     while ($row = pg_fetch_row($res)) {
+                         $ninja_name = $row[2];
+                         $ninja_avatar = $row[1];
+                         $ninja_intro = $row[3];
+                         $intro_print = substr($ninja_intro, 0, 40);
+                         $ninja_point = $row[4];
+                         $jutsu_logo[$i++] = $row[6];
+                         $sato_logo = $row[5];
+                     }
 
-                echo "<div class ='ninja-row-2'>
-                        <div class = 'col-take-0-8'><img src = $sato_logo height='40' width='40' class='img-circle'/></div> 
+                     echo "<a href='ninja_hoso.php?id=$id&pass=$pass&ninja=$ninja_id_tmp'><div class ='ninja-row-2'>
+                        <div class = 'col-take-0-8'><img src = $sato_logo height='40' width='40' class='img-radius'/></div> 
 			<div class = 'col-take-0-8'><img src = $ninja_avatar height='40' width='40' class='img-circle'/></div>
 			<div class = 'col-take-1-6'>$ninja_name</div> 
                         <div class = 'col-take-2'>$intro_print ...</div>";
-                 echo "<div class = 'col-take-2'>";
-                 for ($j = 0; $j < $i; $j++) {
-                     $img = @$jutsu_logo[$j];
-                     echo "<img src = $img height='40' width='40' class='img-circle'/>&nbsp;";
+                     echo "<div class = 'col-take-2'>";
+                     for ($j = 0; $j < $i; $j++) {
+                         $img = @$jutsu_logo[$j];
+                         echo "<img src = $img height='40' width='40' class='img-circle'/>&nbsp;";
+                     }
+                     echo "</div><div class = 'col-take-0-7'>$ninja_point</div></div></a>";
                  }
-                 echo "</div><div class = 'col-take-0-7'>$ninja_point</div></div>";
-             }
 
-             $res = pg_query($conn, "select ninja_id, jutsu_name from ninja
+                 $res = pg_query($conn, "select ninja_id, jutsu_name from ninja
                                         join ninja_jutsu using (ninja_id)
                                         join jutsu using(jutsu_id)
                                         ");
-             $count = 0;
-             $ninja_id_temp[-1] = 1000;
-             $kt = 0;
-             while ($row = pg_fetch_row($res)) {
-                 if ($ninja_id_temp[$count - 1] != $row[0]) {
-                     for($u = 0; $u < $count_all;$u++){
-                         if($result_all[$u]==$row[0]) $kt = 1;
-                     } if($kt == 0) {
-                        if (stripos($row[1], $a) ||stripos($row[1], $a)===0) {
-                         $ninja_id_temp[$count++] = $row[0];
-                         $result_all[$count_all++] = $row[0];
-                        }
+                 $count = 0;
+                 $ninja_id_temp[-1] = 1000;
+                 $kt = 0;
+                 while ($row = pg_fetch_row($res)) {
+                     if ($ninja_id_temp[$count - 1] != $row[0]) {
+                         for ($u = 0; $u < $count_all; $u++) {
+                             if ($result_all[$u] == $row[0])
+                                 $kt = 1;
+                         } if ($kt == 0) {
+                             if (stripos($row[1], $a) || stripos($row[1], $a) === 0) {
+                                 $ninja_id_temp[$count++] = $row[0];
+                                 $result_all[$count_all++] = $row[0];
+                             }
+                         }
                      }
                  }
-             }
-             for ($k = 0; $k < $count; $k ++) {
-                 $ninja_id_tmp = $ninja_id_temp[$k];
-                 $res = pg_query($conn, "select distinct ninja_id, ninja_avatar, ninja_name, ninja_intro, ninja_point, sato_logo, jutsu_logo from ninja
+                 for ($k = 0; $k < $count; $k ++) {
+                     $ninja_id_tmp = $ninja_id_temp[$k];
+                     $res = pg_query($conn, "select distinct ninja_id, ninja_avatar, ninja_name, ninja_intro, ninja_point, sato_logo, jutsu_logo from ninja
                                         join ninja_jutsu using (ninja_id)
                                         join jutsu using (jutsu_id)
                                         join sato_ninja using (ninja_id)
                                         join sato using(sato_id)
                                         where ninja_id = $ninja_id_tmp
                                         ");
-                 $i = 0;
-                 while ($row = pg_fetch_row($res)) {
-                     $ninja_name = $row[2];
-                     $ninja_avatar = $row[1];
-                     $ninja_intro = $row[3];
-                     $intro_print = substr($ninja_intro, 0 , 40);
-                     $ninja_point = $row[4];
-                     $jutsu_logo[$i++] = $row[6];
-                     $sato_logo = $row[5];
-                 }
+                     $i = 0;
+                     while ($row = pg_fetch_row($res)) {
+                         $ninja_name = $row[2];
+                         $ninja_avatar = $row[1];
+                         $ninja_intro = $row[3];
+                         $intro_print = substr($ninja_intro, 0, 40);
+                         $ninja_point = $row[4];
+                         $jutsu_logo[$i++] = $row[6];
+                         $sato_logo = $row[5];
+                     }
 
-                 echo "<div class ='ninja-row-2'>
-                        <div class = 'col-take-0-8'><img src = $sato_logo height='40' width='40' class='img-circle'/></div> 
+                     echo "<a href='ninja_hoso.php?id=$id&pass=$pass&ninja=$ninja_id_tmp'><div class ='ninja-row-2'>
+                        <div class = 'col-take-0-8'><img src = $sato_logo height='40' width='40' class='img-radius'/></div> 
 			<div class = 'col-take-0-8'><img src = $ninja_avatar height='40' width='40' class='img-circle'/></div>
 			<div class = 'col-take-1-6'>$ninja_name</div> 
                         <div class = 'col-take-2'>$intro_print ...</div>";
-                 echo "<div class = 'col-take-2'>";
-                 for ($j = 0; $j < $i; $j++) {
-                     $img = @$jutsu_logo[$j];
-                     echo "<img src = $img height='40' width='40' class='img-circle'/>&nbsp;";
+                     echo "<div class = 'col-take-2'>";
+                     for ($j = 0; $j < $i; $j++) {
+                         $img = @$jutsu_logo[$j];
+                         echo "<img src = $img height='40' width='40' class='img-circle'/>&nbsp;";
+                     }
+                     echo "</div><div class = 'col-take-0-7'>$ninja_point</div></div></a>";
                  }
-                 echo "</div><div class = 'col-take-0-7'>$ninja_point</div></div>";
-             }
 
-             $res = pg_query($conn, "select ninja_id, ninja_intro from ninja");
-             $count = 0;
-             $ninja_id_temp[-1] = 1000;
-              $kt = 0;
-             while ($row = pg_fetch_row($res)) {
-                 if ($ninja_id_temp[$count - 1] != $row[0]) {
-                     for($u = 0; $u < $count_all;$u++){
-                         if($result_all[$u]==$row[0]) $kt = 1;
-                     } if($kt == 0) {
-                        if (stripos($row[1], $a) ||stripos($row[1], $a)===0) {
-                         $ninja_id_temp[$count++] = $row[0];
-                         $result_all[$count_all++] = $row[0];
-                        }
+                 $res = pg_query($conn, "select ninja_id, ninja_intro from ninja");
+                 $count = 0;
+                 $ninja_id_temp[-1] = 1000;
+                 $kt = 0;
+                 while ($row = pg_fetch_row($res)) {
+                     if ($ninja_id_temp[$count - 1] != $row[0]) {
+                         for ($u = 0; $u < $count_all; $u++) {
+                             if ($result_all[$u] == $row[0])
+                                 $kt = 1;
+                         } if ($kt == 0) {
+                             if (stripos($row[1], $a) || stripos($row[1], $a) === 0) {
+                                 $ninja_id_temp[$count++] = $row[0];
+                                 $result_all[$count_all++] = $row[0];
+                             }
+                         }
                      }
                  }
-             }
-             for ($k = 0; $k < $count; $k ++) {
-                 $ninja_id_tmp = $ninja_id_temp[$k];
-                 $res = pg_query($conn, "select distinct ninja_id, ninja_avatar, ninja_name, ninja_intro, ninja_point, sato_logo, jutsu_logo from ninja
+                 for ($k = 0; $k < $count; $k ++) {
+                     $ninja_id_tmp = $ninja_id_temp[$k];
+                     $res = pg_query($conn, "select distinct ninja_id, ninja_avatar, ninja_name, ninja_intro, ninja_point, sato_logo, jutsu_logo from ninja
                                         join ninja_jutsu using (ninja_id)
                                         join jutsu using (jutsu_id)
                                         join sato_ninja using (ninja_id)
                                         join sato using(sato_id)
                                         where ninja_id = $ninja_id_tmp
                                         ");
-                 $i = 0;
-                 while ($row = pg_fetch_row($res)) {
-                     $ninja_name = $row[2];
-                     $ninja_avatar = $row[1];
-                     $ninja_intro = $row[3];
-                     $intro_print1 = substr($ninja_intro, stripos($row[3], $a) - 10, 10);
-                     $intro_print2 = substr($ninja_intro, stripos($row[3], $a), strlen($a));
-                     $intro_print3 = substr($ninja_intro, stripos($row[3], $a) + strlen($a) , 35);
-                     $ninja_point = $row[4];
-                     $jutsu_logo[$i++] = $row[6];
-                     $sato_logo = $row[5];
-                 }
+                     $i = 0;
+                     while ($row = pg_fetch_row($res)) {
+                         $ninja_name = $row[2];
+                         $ninja_avatar = $row[1];
+                         $ninja_intro = $row[3];
+                         $intro_print1 = substr($ninja_intro, stripos($row[3], $a) - 10, 10);
+                         $intro_print2 = substr($ninja_intro, stripos($row[3], $a), strlen($a));
+                         $intro_print3 = substr($ninja_intro, stripos($row[3], $a) + strlen($a), 35);
+                         $ninja_point = $row[4];
+                         $jutsu_logo[$i++] = $row[6];
+                         $sato_logo = $row[5];
+                     }
 
-                 echo "<div class ='ninja-row-2'>
-                        <div class = 'col-take-0-8'><img src = $sato_logo height='40' width='40' class='img-circle'/></div> 
+                     echo "<a href='ninja_hoso.php?id=$id&pass=$pass&ninja=$ninja_id_tmp'><div class ='ninja-row-2'>
+                        <div class = 'col-take-0-8'><img src = $sato_logo height='40' width='40' class='img-radius'/></div> 
 			<div class = 'col-take-0-8'><img src = $ninja_avatar height='40' width='40' class='img-circle'/></div>
 			<div class = 'col-take-1-6'>$ninja_name</div> 
                         <div class = 'col-take-2'>...$intro_print1<b>$intro_print2</b>$intro_print3 ...</div>";
-                 echo "<div class = 'col-take-2'>";
-                 for ($j = 0; $j < $i; $j++) {
-                     $img = @$jutsu_logo[$j];
-                     echo "<img src = $img height='40' width='40' class='img-circle'/>&nbsp;";
+                     echo "<div class = 'col-take-2'>";
+                     for ($j = 0; $j < $i; $j++) {
+                         $img = @$jutsu_logo[$j];
+                         echo "<img src = $img height='40' width='40' class='img-circle'/>&nbsp;";
+                     }
+                     echo "</div><div class = 'col-take-0-7'>$ninja_point</div></div></a>";
                  }
-                 echo "</div><div class = 'col-take-0-7'>$ninja_point</div></div>";
              }
-         }
-         ?>
-      </div>
+             ?>
+          </div>
+          <?php
+      } else {
+          $res = pg_query($conn, "Select ninja_name, ninja_avatar, ninja_point, ninja_intro, 
+                                        ninja_ninmu_success, ninja_ninmu_fail, 
+                                        ninja_cost, jutsu_logo, sato_name, ninja_background from ninja
+                                        natural join ninja_jutsu
+					natural join jutsu
+                                        natural join sato_ninja
+                                        natural join sato
+                                        where ninja_id='$ninja_id'");
+          $row = pg_fetch_row($res);
+          $name = $row[0];
+          $avatar = $row[1];
+          $point = $row[2];
+          $info = $row[3];
+          $ninmu_success = $row[4];
+          $ninmu_fail = $row[5];
+          $cost = $row[6];
+          $sato = $row[8];
+          $jutsu[0]=$row[7];
+          $bg = $row[9];
+          $i = 1;
+          $sum = $ninmu_fail + $ninmu_success;
+          $avg = $ninmu_success * 100 / $sum;
+          $avgx = number_format($avg, 2);
+
+          while ($row = @pg_fetch_row($res)) {
+              $jutsu[$i++] = $row[7];
+          }
+          ?>
+          <div id="bang-ninja">
+             <div id="bang-ninja-background">
+                 <img class='bg'src=<?php echo $bg; ?> height="350" width="800"/>
+             </div>
+             <div id="bang-ninja-avatar">
+                <img class='av' src=<?php echo $avatar; ?> height="200" width="200" class="img-radius"/>
+                <span style="font-weight: bold;font-size:20px;"><?php echo $name; ?></span><br/>
+                <span style="font-weight: bold;font-size:20px;"><?php echo $sato; ?></span><br/>
+             </div>
+             <div id="bang-ninja-thong-tin">
+                <span style="font-weight: bold;font-size:30px;"><?php echo $point; ?></span> điểm&nbsp;&nbsp;&nbsp;&nbsp;
+                <span style="font-weight: bold;font-size:30px;"><?php echo " $cost$"; ?><br/></span>
+                <span style="font-weight: bold;font-size:30px;">
+                   <?php echo $sum; ?></span> nhiệm vụ &nbsp;&nbsp;&nbsp;&nbsp;
+                <span style="font-weight: bold;font-size:30px;">    
+                   <?php echo " $avgx "; ?></span>thành công
+                <br/>
+                <?php
+                for ($j = 0; $j < $i; $j++) {
+                    echo "<img src=$jutsu[$j] height='50' width='50' class='img-circle'/>&nbsp;&nbsp;";
+                }
+                ?>
+                <br/>
+                <span style="font-weight: bold;font-size:25px;">Thông tin</span><br/>
+                <p><?php echo $info; ?></p>
+             </div>
+          </div>
+          <?php
+      }
+      ?>
 
       <script src="js/jquery-2.1.4.min.js"></script>
       <script src="js/main.js"></script>

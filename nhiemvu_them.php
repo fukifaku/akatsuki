@@ -253,47 +253,48 @@ $id = @$_GET['id'];
 //          } else {
           ?>
          <form class="form-them-nhiem-vu" method="post">
-            <div id="form-nhiem-vu-title">
-               <h2>them nv</h2>
+            <div id="form-nhiem-vu-title" style="text-align: center;">
+               <span style ='color:white;font-family:Verdana;font-size:14pt;'>Thêm Nhiệm Vụ<br/><br/></span>
             </div>
             <div id="form-nhiem-vu-ten" title="Tên Nhiệm Vụ">
-               <span class="input input--isao">
-                  <input class="input__field input__field--isao" type="text" id="nhiem-vu-ten" name="ten" />
-                  <label class="input__label input__label--isao" for="nhiem-vu-ten" data-content="Tên Nhiệm Vụ">
-                     <span class="input__label-content input__label-content--isao">Tên Nhiệm Vụ</span>
+               <span class="input input--kuro">
+                  <input class="input__field input__field--kuro" type="text" id="input-7" name="ten"/>
+                  <label class="input__label input__label--kuro" for="input-7">
+                     <span class="input__label-content input__label-content--kuro">Nhiệm Vụ</span>
                   </label>
                </span>
             </div>
-            <div id="form-nhiem-vu-mo-ta">
-               <label class="title">Mô tả nhiệm vụ</label>
-               <textarea style="overflow: hidden" data-autoresize rows="2" name="mota"  id="nhiem-vu-mo-ta">s</textarea>
-            </div>
-            <div id="form-nhiem-vu-skill"><label class="title">chon skill</label>
+            <div id="form-nhiem-vu-difficulty">
+               <select id="example-movie" name="difficulty">
+                  <option value="50">Siêu Dễ</option>
+                  <option value="100">Dễ</option>
+                  <option value="150" selected="selected">Trung Bình</option>
+                  <option value="200">Khó</option>
+                  <option value="250">Siêu Khó</option>
+               </select>
+            </div>            
+            <div id="form-nhiem-vu-skill">
                 <?php
                 $res = @pg_query($conn, "Select jutsu_logo, jutsu_id from jutsu");
                 while ($row = @pg_fetch_row($res)) {
-                    echo "<label><input class = 'skill-chon' type='checkbox' name='skill[]' value='$row[1]' /><img src='$row[0]' height='40' width='40' class='img-circle'></label>";
+                    echo "<label><input class = 'skill-chon' type='checkbox' name='skill[]' value='$row[1]' /><img src='$row[0]' height='55' width='55' class='img-circle'>&nbsp;&nbsp;</label>";
                 }
                 ?>
             </div>
-
-            <select id="example-movie" name="difficulty">
-               <option value="50">Siêu Dễ</option>
-               <option value="100">Dễ</option>
-               <option value="150" selected="selected">Trung Bình</option>
-               <option value="200">Khó</option>
-               <option value="250">Siêu Khó</option>
-            </select>
-
-            <div id="form-nhiem-vu-time">
-               <label class="title">thoi gian bat dau</label>
+            <div id="form-nhiem-vu-lang">
+               <label><input class = "lang-chon" type="radio" name="radio" value="1" /><img src="logo/logo_la.png" height="55" width="55" class="img-radius"></label>
+               <label><input class = "lang-chon" type="radio" name="radio" value="2" /><img src="logo/logo_cat.png" height="55" width="55" class="img-radius"></label>
+               <label><input class = "lang-chon" type="radio" name="radio" value="3" /><img src="logo/logo_suong.png" height="55" width="55" class="img-radius"></label>
+               <label><input class = "lang-chon" type="radio" name="radio" value="4" /><img src="logo/logo_da.png" height="55" width="55" class="img-radius"></label>
+               <label><input class = "lang-chon" type="radio" name="radio" value="5" /><img src="logo/logo_may.png" height="55" width="55" class="img-radius"></label>
+            </div>
+            <div id="form-nhiem-vu-time" style="text-align: center;">
+               <span style ='color:white;font-family:Verdana;font-size:14pt;'>Thời gian<br/><br/></span>
                <input type="text" id="datetimepicker_dark" name="ninmu-time-start"/>
+               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+               <input type="text" id="datetimepicker_dark2" name="ninmu-time-end"/>
             </div>
-            <div id="form-nhiem-vu-time">
-               <label class="title">thoi gian ket thuc</label>
-               <input type="text" id="datetimepicker_dark" name="ninmu-time-end"/>
-            </div>
-            <div id="form-nhiem-vu-lang"> <label class="title"><?php
+            <?php
 //                date_default_timezone_set('Asia/Saigon');
 //                $d1 = strtotime("26-10-2015 16:28");
 //                $today = date('Y-m-d H:i:s');
@@ -316,14 +317,14 @@ $id = @$_GET['id'];
 ////                $timezone = 'Asia/Saigon';
 ////                $dtUtcDate = strtotime($dateStr);
 ////                echo $dtUtcDate;
-                    ?></label>
-               <label><input class = "lang-chon" type="radio" name="radio" value="1" /><img src="fb1.jpg" height="40" width="40" class="img-circle"></label>
-               <label><input class = "lang-chon" type="radio" name="radio" value="4" /><img src="fb1.jpg" height="40" width="40" class="img-circle"></label>
-               <label><input class = "lang-chon" type="radio" name="radio" value="3" /><img src="fb1.jpg" height="40" width="40" class="img-circle"></label>
-               <label><input class = "lang-chon" type="radio" name="radio" value="5" /><img src="fb1.jpg" height="40" width="40" class="img-circle"></label>
-               <label><input class = "lang-chon" type="radio" name="radio" value="2" /><img src="fb1.jpg" height="40" width="40" class="img-circle"></label>
+                  ?>
+            <div id="form-nhiem-vu-mo-ta" style="text-align: center;">
+               <span style ='color:white;font-family:Verdana;font-size:14pt;'>Mô tả Nhiệm Vụ<br/><br/></span>
+               <textarea style="overflow: hidden" data-autoresize rows="4" cols="40" name="mota" id="nhiem-vu-mo-ta" placeholder="  Mô tả gì đó..."></textarea>
             </div>
-            <div class="submit"><input type="submit" value="submit" name="submit-button"/></div>
+            <div id="submit-nhiem-vu" style="text-align: center;">
+               <input id ="submit-nhiem-vu-x" type="submit" value="Thêm Nhiệm Vụ" name="submit-button"/>
+            </div>
          </form>
          <?php
          //   }
@@ -340,9 +341,17 @@ $id = @$_GET['id'];
              $start = date_create($ninmu_starttime);
              $time2 = date_diff($start, $end);
              $s = $time2->format("day %d, hour %h, minutes %i");
+             if($end < $start) {
+                 echo "thời gian kết thúc nhỏ hơn thời gian bắt đầu!<br/>";
+             } else {
+//              $res = pg_query($conn, "insert into ninmu(ninmu_name, ninmu_teampoint, ninmu_time_start, ninmu_time_end, ninmu_description)"
+//                      . "values('$ninmu_ten', $ninmu_point, '$ninmu_starttime', '$ninmu_endtime', '$ninmu_mota')");
+                 
+             }
+             //echo "$s, $s2";
              $end2 = $start;
              date_add($end2, $time2);
-             $end3 = date_format($end2, "Y-m-d H:i:m");
+         //    $end3 = date_format($end2, "Y-m-d H:i:m");
              //echo "</br>thesecond: $s, ketthuc: $end3;</div>";
 //              $res = pg_query($conn, "insert into ninmu(ninmu_name, ninmu_teampoint, ninmu_time_start, ninmu_time_end, ninmu_description)"
 //                      . "values('$ninmu_ten', $ninmu_point, '$ninmu_starttime', '$ninmu_endtime', '$ninmu_mota')");
