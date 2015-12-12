@@ -12,6 +12,7 @@ $id = @$_GET['id'];
       <link rel="stylesheet" type='text/css' href="css/style.css"> 
       <link rel="stylesheet" type="text/css" href="css/normalize.css" />
       <!--<link rel="stylesheet" type="text/css" href="css/demo.css" />-->
+      <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css"/>
       <link rel="stylesheet" type="text/css" href="css/set2.css" />
       <link rel="stylesheet" type="text/css" href="css/set1.css" />
       <link rel="stylesheet" type="text/css" href="css/akatsuki.css">
@@ -73,42 +74,56 @@ $id = @$_GET['id'];
             </li>
          </ul>
       </div>
-      <div id ="bang-thong-tin">
+      <div id = "bang-ngan-quy">
 
          <?php
          $res = @pg_query($conn, "select customer_money from customer where customer_id = "
                          . "(select customer_id from customer where customer_username = '$id')");
 
          $row = @pg_fetch_row($res);
-         echo "Ngan quy con: $row[0] <br/>";
+         ?>
+         <div id="ngan-quy-x">
+            <div id="ngan-quy-xy1">
+                <?php
+                echo "Ngân Quỹ:&nbsp;&nbsp;&nbsp;<span style ='font-family:calibri;font-size:30pt;font-weight:bold'>$row[0]$</span>";
+                ?>
+            </div>
+            <div id="ngan-quy-xy2">
+               <a class ="btn btn-big" href ="#modal-one"><img src = "img/deposit.png" height="50px" width="50px"></a>
+            </div>  
+         </div>
+         <div id ="ngan-quy-head-row">
+            <div class = "col-take-3">Thời gian</div>
+            <div class = "col-take-1">Giao Dịch</div>
+         </div>
 
+         <?php
          $res = @pg_query($conn, "select money_time, money_amount from customer_money where customer_id = "
                          . "(select customer_id from customer where customer_username = '$id')");
          while (@$row = @pg_fetch_row($res)) {
-             echo "$row[0], $row[1] <br/>";
+             echo "<div id ='ngan-quy-content-row'><div class = 'col-take-3'>$row[0]</div><div class = 'col-take-1'>$row[1]$</div></div>";
          }
          ?>
-         <a class ="btn btn-big" href ="#modal-one"><img src = "avatar_ninja/hinata.jpg" height="30px" width="30px"></a>
          <a href="#" class="modal" id="modal-one" aria-hidden="true"></a>
          <div class="modal-dialog">
             <form class ="nap-the" method="post">
                <span class="input input--kohana">
                   <input class="input__field input__field--kohana" type="text" id="input-29" name="the"/>
                   <label class="input__label input__label--kohana" for="input-29">
-                     <i class="fa fa-fw fa-clock-o icon icon--kohana"></i>
+                     <i class="fa fa-fw fa-pencil icon icon--kohana"></i>
                      <span class="input__label-content input__label-content--kohana">Thẻ</span>
                   </label>
                </span>
-               <div class="submit">
-                  <input type="submit" value="submit" name="submit-button"/>
+               <div class="submit-nap-the">
+                  <input id = "submit-nap-the-x" type="submit" value="Nạp" name="submit-button"/>
                </div>
             </form>
             <?php
             if (@isset($_POST['submit-button'])) {
                 $the = $_POST['the'];
                 $res = @pg_query($conn, "select card_value from card where card_id ='$the'");
-                $row=@pg_fetch_row($res);
-                if(!$row[0]){
+                $row = @pg_fetch_row($res);
+                if (!$row[0]) {
                     echo "wrong card";
                 } else {
                     $res = @pg_query($conn, "select customer_id from customer where customer_username = '$id'");
@@ -116,13 +131,14 @@ $id = @$_GET['id'];
                     $today = date('Y-m-d H:i:s');
                     $res = pg_query($conn, "insert into customer_money values('$row2[0]','$today', '$row[0]')");
                     $res = pg_query($conn, "delete from card where card_id = '$the' ");
-                  //  header("Location: taikhoan_nganquy.php?id=$id&pass=$pass");
+                    //  header("Location: taikhoan_nganquy.php?id=$id&pass=$pass");
                 }
             }
             ?>
-         </div>
 
+         </div>
       </div>
+
 
       <script src="js/jquery-2.1.4.min.js"></script>
       <script src="js/main.js"></script>

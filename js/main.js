@@ -158,17 +158,29 @@ $(document).ready(function () {
             $(this).next().slideDown();
         }
     });
-    $("#accordian ul ul #xep-hang").click(function () {
-        $('#xep-hang').addClass('active');
+//    $("#accordian ul ul #xep-hang").click(function () {
+//        $('#xep-hang').addClass('active');
 //        $("#bang-xep-hang").show();
-//        $("#bang-them-nhiem-vu").hide();
-
-    });
-    $("#accordian ul ul #them-nhiem-vu").click(function () {
-        $('#them-nhiem-vu').addClass('active');
- //       $("#bang-them-nhiem-vu").show();
-  //      $("#bang-xep-hang").hide();
-    });
+//        $("#bang-thong-tin").hide();
+//
+//    });
+//    $("#accordian ul ul #them-nhiem-vu").click(function () {
+//        $('#them-nhiem-vu').addClass('active');
+// //       $("#bang-them-nhiem-vu").show();
+//  //      $("#bang-xep-hang").hide();
+//    });
+//    $("#accordian ul ul #thong-tin").click(function () {
+//        $('#thong-tin').addClass('active');
+//        $("#bang-thong-tin").show();
+//        $("#bang-xep-hang").hide();
+//    });
+//    
+//    $('.submit-thongtin').click(function(e){
+//        $('#thong-tin').addClass('active');
+//        $("#bang-thong-tin").show();
+//        $("#bang-xep-hang").hide();
+//        e.preventDefault();
+//    })
 
 //hien description cua ninja
     $('.ninja-row').click(function () {

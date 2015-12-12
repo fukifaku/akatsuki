@@ -78,7 +78,7 @@ $id = @$_GET['id'];
          <div id = "taikhoan-avatar">
              <?php
              $res = @pg_query($conn, "select customer_avatar from customer where customer_username = '$id'");
-
+             
              $row = @pg_fetch_row($res);
              echo "<img src='$row[0]' height = '200' weight= '200'/>";
              ?>
@@ -87,13 +87,13 @@ $id = @$_GET['id'];
              <?php
              $res = pg_query($conn, "select customer_name,customer_birth, customer_email, customer_info from customer where customer_username = '$id'");
              $row = pg_fetch_row($res);
-             echo "$row[0],$row[1],$row[2],$row[3]";
+           //  echo "$row[0],$row[1],$row[2],$row[3]";
              if (@isset($_POST['submit-button'])) {
                  $ten = $_POST['name'];
                  if(!$ten){
                      $ten = $row[0];
                  }
-                 echo "this is ten: $ten";
+              
                  $ngsinh = $_POST['birth'];
                  if(!$ngsinh){
                      $ngsinh = $row[1];
@@ -115,32 +115,32 @@ $id = @$_GET['id'];
                <span class="input input--kohana">
                   <input class="input__field input__field--kohana" type="text" id="input-29" name="name"/>
                   <label class="input__label input__label--kohana" for="input-29">
-                     <i class="fa fa-fw fa-clock-o icon icon--kohana"></i>
+                     <i class="fa fa-fw fa-user icon icon--kohana"></i>
                      <span class="input__label-content input__label-content--kohana"><?php echo "$row[0]";?></span>
                   </label>
                </span><span class="input input--kohana">
                   <input class="input__field input__field--kohana" type="text" id="input-29" name="birth"/>
                   <label class="input__label input__label--kohana" for="input-29">
-                     <i class="fa fa-fw fa-clock-o icon icon--kohana"></i>
+                     <i class="fa fa-fw fa-calendar icon icon--kohana"></i>
                      <span class="input__label-content input__label-content--kohana"><?php echo "$row[1]";?></span>
                   </label>
                </span><span class="input input--kohana">
                   <input class="input__field input__field--kohana" type="text" id="input-29" name="info"/>
                   <label class="input__label input__label--kohana" for="input-29">
-                     <i class="fa fa-fw fa-clock-o icon icon--kohana"></i>
+                     <i class="fa fa-fw fa-info icon icon--kohana"></i>
                      <span class="input__label-content input__label-content--kohana"><?php echo "$row[3]";?></span>
                   </label>
                </span>
                <span class="input input--kohana">
                   <input class="input__field input__field--kohana" type="text" id="input-29" name="email"/>
                   <label class="input__label input__label--kohana" for="input-29">
-                     <i class="fa fa-fw fa-clock-o icon icon--kohana"></i>
+                     <i class="fa fa-fw fa-inbox icon icon--kohana"></i>
                      <span class="input__label-content input__label-content--kohana"><?php echo "$row[2]";?></span>
                   </label>
                </span>
                
-            <div class="submit">
-               <input type="submit" value="submit" name="submit-button"/>
+            <div class="submit-thongtin-div">
+               <input class="submit-thongtin" type="submit" value="Thay đổi" name="submit-button"/>
             </div>
             </form>
          </div>

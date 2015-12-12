@@ -50,6 +50,7 @@ $id = @$_GET['id'];
                <h2><span class="icon-tasks"></span>Ninja</h2>
                <ul>
                   <li id="xep-hang"  class ="active"><a href="ninja_xephang.php?id=<?php echo $id?>&pass=<?php echo $pass?>" >Bảng xếp hạng</a></li>
+                  <!--<li id="xep-hang"  class ="active"><a href="#">Bảng xếp hạng</a></li>-->
                   <li id="ho-so"><a href="ninja_hoso.php?id=<?php echo $id?>&pass=<?php echo $pass?>" >Hồ sơ Ninja</a></li>
                   <li id='trang-thai'><a href="ninja_trangthai.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Trạng thái</a></li>
                   <li id='yeu-thich'><a href="ninja_yeuthich.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Yêu thích</a></li>
@@ -59,6 +60,7 @@ $id = @$_GET['id'];
                <h2><span class="icon-calendar"></span>Tài khoản</h2>
                <ul>
                   <li id='thong-tin'><a href="taikhoan_thongtin.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Thông tin</a></li>
+                  <!--<li id='thong-tin'><a href ="#">Thông tin</a></li>-->
                   <li id='ngan-quy'><a href="taikhoan_nganquy.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Ngân Quỹ</a></li>
                   <li id='dang-xuat'><a href='user_program.php'>Đăng xuất</a></li>
                </ul>

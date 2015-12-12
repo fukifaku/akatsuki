@@ -85,7 +85,8 @@ body .nomargin-bottom {
 	font-size: 0.85em;
 	display: inline-block;
 	margin: 0 1em;
-	font-family: "Avenir", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	//font-family: "Avenir", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-family: Verdana;
 }
 
 .codrops-demos a.current-demo {
