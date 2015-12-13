@@ -42,35 +42,35 @@ $id = @$_GET['id'];
             <li>
                <h2><span class="icon-mission"></span>Nhiệm vụ</h2>
                <ul>
-                  <li id="them-nhiem-vu"><a href="nhiemvu_them.php?id=<?php echo $id?>&pass=<?php echo $pass?>" >Thêm nhiệm vụ</a></li>
-                  <li id='lich-su-nhiem-vu'><a href="nhiemvu_lichsu.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Lịch sử nhiệm vụ</a></li>
+                  <li id="them-nhiem-vu"><a href="nhiemvu_them.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>" >Thêm nhiệm vụ</a></li>
+                  <li id='lich-su-nhiem-vu'><a href="nhiemvu_lichsu.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Lịch sử nhiệm vụ</a></li>
                </ul>
             </li>
             <li class ="active">
                <h2><span class="icon-tasks"></span>Ninja</h2>
                <ul>
-                  <li id="xep-hang"  class ="active"><a href="ninja_xephang.php?id=<?php echo $id?>&pass=<?php echo $pass?>" >Bảng xếp hạng</a></li>
+                  <li id="xep-hang"  class ="active"><a href="ninja_xephang.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>" >Bảng xếp hạng</a></li>
                   <!--<li id="xep-hang"  class ="active"><a href="#">Bảng xếp hạng</a></li>-->
-                  <li id="ho-so"><a href="ninja_hoso.php?id=<?php echo $id?>&pass=<?php echo $pass?>" >Hồ sơ Ninja</a></li>
-                  <li id='trang-thai'><a href="ninja_trangthai.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Trạng thái</a></li>
-                  <li id='yeu-thich'><a href="ninja_yeuthich.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Yêu thích</a></li>
+                  <li id="ho-so"><a href="ninja_hoso.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>" >Hồ sơ Ninja</a></li>
+                  <li id='trang-thai'><a href="ninja_trangthai.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Trạng thái</a></li>
+                  <li id='yeu-thich'><a href="ninja_yeuthich.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Yêu thích</a></li>
                </ul>
             </li>
             <li>
                <h2><span class="icon-calendar"></span>Tài khoản</h2>
                <ul>
-                  <li id='thong-tin'><a href="taikhoan_thongtin.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Thông tin</a></li>
+                  <li id='thong-tin'><a href="taikhoan_thongtin.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Thông tin</a></li>
                   <!--<li id='thong-tin'><a href ="#">Thông tin</a></li>-->
-                  <li id='ngan-quy'><a href="taikhoan_nganquy.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Ngân Quỹ</a></li>
+                  <li id='ngan-quy'><a href="taikhoan_nganquy.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Ngân Quỹ</a></li>
                   <li id='dang-xuat'><a href='user_program.php'>Đăng xuất</a></li>
                </ul>
             </li>
             <li>
                <h2><span class="icon-heart"></span>Hướng dẫn</h2>
                <ul>
-                  <li id='hd-nhiemvu'><a href="huongdan_nhiemvu.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Nhiệm Vụ</a></li>
-                  <li id='hd-ninja'><a href="huongdan_ninja.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Ninja</a></li>
-                  <li id='hd-taikhoan'><a href="huongdan_taikhoan.php?id=<?php echo $id?>&pass=<?php echo $pass?>">Tài khoản</a></li>
+                  <li id='hd-nhiemvu'><a href="huongdan_nhiemvu.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Nhiệm Vụ</a></li>
+                  <li id='hd-ninja'><a href="huongdan_ninja.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Ninja</a></li>
+                  <li id='hd-taikhoan'><a href="huongdan_taikhoan.php?id=<?php echo $id ?>&pass=<?php echo $pass ?>">Tài khoản</a></li>
                </ul>
             </li>
          </ul>
@@ -84,11 +84,12 @@ $id = @$_GET['id'];
          </div>
 
          <?php
-         $res = @pg_query($conn, "Select ninja_name, ninja_avatar, ninja_point, ninja_ninmu_success, ninja_ninmu_fail, ninja_cost, jutsu_logo, sato_name from ninja
-                                        join ninja_jutsu on ninja_jutsu.ninja_id = ninja.ninja_id
-					join jutsu on jutsu.jutsu_id = ninja_jutsu.jutsu_id
-                                        join sato_ninja on sato_ninja.ninja_id = ninja.ninja_id
-                                        join sato on sato_ninja.sato_id = sato.sato_id");
+         $res = @pg_query($conn, "Select ninja_name, ninja_avatar, ninja_point, ninja_ninmu_success, ninja_ninmu_fail, ninja_cost, jutsu_logo, sato_logo from ninja
+                                        natural join ninja_jutsu
+					natural join jutsu
+                                        natural join sato_ninja
+                                        natural join sato
+                                        order by ninja_point desc, ninja_name asc");
 
          $i = -1;
          $ninja_name[-1] = 'xxx';
@@ -107,74 +108,69 @@ $id = @$_GET['id'];
              $ninja_sato[$i] = $row[7];
          }
 
-         function swap(&$a, &$b) {
-             $temp = $a;
-             $a = $b;
-             $b = $temp;
-         }
-
-         for ($j = 0; $j < $i; $j++)
-             for ($k = $j + 1; $k < $i + 1; $k++) {
-                 if (intval($ninja_point[$j]) < intval($ninja_point[$k])) {
-                     swap($ninja_point[$j], $ninja_point[$k]);
-                     swap($ninja_name[$j], $ninja_name[$k]);
-                     swap($ninja_avatar[$j], $ninja_avatar[$k]);
-                     swap($ninja_ninmu_success[$j], $ninja_ninmu_success[$k]);
-                     swap($ninja_ninmu_fail[$j], $ninja_ninmu_fail[$k]);
-                     swap($ninja_cost[$j], $ninja_cost[$k]);
-                     swap($jutsu_logo[$j], $jutsu_logo[$k]);
-                     swap($ninja_sato[$j], $ninja_sato[$k]);
-                 }
-             }
+//         function swap(&$a, &$b) {
+//             $temp = $a;
+//             $a = $b;
+//             $b = $temp;
+//         }
+//
+//         for ($j = 0; $j < $i; $j++)
+//             for ($k = $j + 1; $k < $i + 1; $k++) {
+//                 if (intval($ninja_point[$j]) < intval($ninja_point[$k])) {
+//                     swap($ninja_point[$j], $ninja_point[$k]);
+//                     swap($ninja_name[$j], $ninja_name[$k]);
+//                     swap($ninja_avatar[$j], $ninja_avatar[$k]);
+//                     swap($ninja_ninmu_success[$j], $ninja_ninmu_success[$k]);
+//                     swap($ninja_ninmu_fail[$j], $ninja_ninmu_fail[$k]);
+//                     swap($ninja_cost[$j], $ninja_cost[$k]);
+//                     swap($jutsu_logo[$j], $jutsu_logo[$k]);
+//                     swap($ninja_sato[$j], $ninja_sato[$k]);
+//                 }
+//             }
 
          for ($j = 0; $j < $i + 1; $j++) {
              $count = $j + 1;
              echo "<div class ='ninja-row'>
                         <div class ='ninja-name-row'>
 			<div class = 'col-take-1'>$count</div>
-			<div class = 'col-take-1'><img src = $ninja_avatar[$j] height='40' width='40' class='img-circle'/></div> 
+			<div class = 'col-take-1'><img src = $ninja_avatar[$j] height='40' width='40' class='img-circle-border'/></div> 
 			<div class = 'col-take-3'>$ninja_name[$j]</div> 
 			<div class = 'col-take-1'>$ninja_point[$j]</div>
                         </div>";
              ?>
              <div class="ninja-description">
-                <table class ="description-table">
-                   <tr>
-                      <td class="col-vi-tri">Vị trí</td>
-                      <td class="col-ki-nang">Kĩ năng</td>
-                      <td class="col-so-nv">Số NV đã làm</td>
-                      <td class="col-xs">XS thành công</td>
-                      <td class="col-gt">Giá trị</td>
-                   </tr>
-                   <tr>
-                      <td class="col-vi-tri"><?php echo "$ninja_sato[$j]" ?> </td>
-                      <td class="col-ki-nang">
-                          <?php
-                          $n = 0;
-                          while (@$jutsu_logo[$j][$n]) {
-                              $img = @$jutsu_logo[$j][$n];
-                              echo "<img src = $img height='40' width='40' class='img-circle'/>&nbsp;";
-                              $n++;
-                          }
-                          ?>
-                      </td>
-                      <td class="col-so-nv">
-                          <?php
-                          $sum[$j] = $ninja_ninmu_fail[$j] + $ninja_ninmu_success[$j];
-                          echo "$sum[$j]";
-                          ?>
-                      </td>
-                      <td class="col-xs">
-                          <?php
-                          $avg[$j] = $ninja_ninmu_success[$j] * 100 / $sum[$j];
-                          $avgx[$j] = number_format($avg[$j], 2);
-                          echo "$avgx[$j] %";
-                          ?>
-                      </td>
-                      <td class="col-gt">Giá trị</td></tr>
 
-                   </tr>
-                </table>
+                <div class="col-vi-tri" style="text-align: center;">
+                   <img src=<?php echo "$ninja_sato[$j]" ?> height="45" width="45" class ="img-radius"/> 
+                </div>
+                <div class="col-ki-nang" style="text-align: center;">
+                    <?php
+                    $n = 0;
+                    while (@$jutsu_logo[$j][$n]) {
+                        $img = @$jutsu_logo[$j][$n];
+                        echo "<img src = $img height='45' width='45' class='img-circle'/>&nbsp;";
+                        $n++;
+                    }
+                    ?>
+                </div>
+                <div class="col-xs">
+                    <?php
+                    $sum[$j] = $ninja_ninmu_fail[$j] + $ninja_ninmu_success[$j];
+                    $avg[$j] = $ninja_ninmu_success[$j] * 100 / $sum[$j];
+                    $avgx[$j] = number_format($avg[$j], 0);
+                    ?>
+                   <div class="col-xs-x">
+                      <span style="font-weight: bold;font-size:25px;">
+                         <?php echo $sum[$j]; ?></span> nhiệm vụ &nbsp;
+                      <span style="font-weight: bold;font-size:25px;">    
+                         <?php echo " $avgx[$j]"; ?></span>% thành công
+                   </div>
+                </div>
+                <div class="col-gt">
+                   <div class="col-gt-x">
+                      <span style="font-weight: bold;font-size:25px;"><?php echo " $ninja_cost[$j]$"; ?></span>
+                   </div>
+                </div>
              </div>
           </div>
           <?php

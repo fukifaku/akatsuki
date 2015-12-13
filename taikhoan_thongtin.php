@@ -80,7 +80,7 @@ $id = @$_GET['id'];
              $res = @pg_query($conn, "select customer_avatar from customer where customer_username = '$id'");
              
              $row = @pg_fetch_row($res);
-             echo "<img src='$row[0]' height = '200' weight= '200' class='img-radius'/>";
+             echo "<img src='$row[0]' height = '200' weight= '200' class='img-radius-border'/>";
              ?>
          </div>
          <div id ="taikhoan-thongtin">

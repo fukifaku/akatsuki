@@ -14,6 +14,17 @@ body {
 .img-radius {
     border-radius: 15%;
 }
+.img-radius-border {
+    border-radius: 15%;
+    border: 5px solid white;
+}
+.img-circle-border {
+    border-radius: 50%;
+    border: 2px solid white;
+}
+#money {
+    color: yellow;
+}
 input {
     background-color: #454751;
     color: white;
@@ -185,6 +196,7 @@ textarea {
 
 #bang-ngan-quy {
     padding-top: 30px;
+    padding-bottom: 30px;
     margin: 30px auto 60px 340px;
     width: 700px;
     background-color: #343642;
@@ -234,7 +246,6 @@ textarea {
     float: left;
     width: 300px;
     padding: 10px;
-    padding-left: 50px;
     background: #D85269;
     color: white;
 }
@@ -424,31 +435,44 @@ textarea {
 }
 
 .ninja-description {
+    background-color: #454751;
     width: 700px;
-    height: 90px;
+    height: 70px;
     display: none;
     border-bottom: 2px #454751 solid;
 }
 
-.description-table {
-    color: white;
-    width: 100%;
-}
-
-.col-vi-tri,.col-xs, .col-so-nv{
-    width:20%;
+.col-vi-tri {
+    margin-top: 10px;
+    float: left;
+    width: 10%;
     padding-left: 10px;
     padding-right: 10px;
 }
+.col-xs{
+    float: left;
+    width: 45%;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.col-xs-x {
+    color: white;
+    margin-top: 20px;
+}
 .col-ki-nang{
-    width: 28%;
+    float: left;
+    width: 33%;
     padding-left: 10px;
     padding-top: 10px;
 }
 .col-gt {
-    width:12%;
-    padding-left: 10px;
-    padding-top: 10px;
+    float: left;
+    width: 12%;
+  //  padding-top: 10px;
+}
+.col-gt-x {
+    color: yellow;
+    margin-top: 20px;
 }
 
 .form-them-nhiem-vu {

@@ -14,7 +14,7 @@ $id = @$_GET['id'];
       <link rel="stylesheet" type="text/css" href="css/demo.css" />
       <link rel="stylesheet" type="text/css" href="css/set2.css" />
       <link rel="stylesheet" type="text/css" href="css/akatsuki.css">
-
+      
       <script src="js/modernizr.js"></script> 
 
 
@@ -332,7 +332,7 @@ $id = @$_GET['id'];
           $i = 1;
           $sum = $ninmu_fail + $ninmu_success;
           $avg = $ninmu_success * 100 / $sum;
-          $avgx = number_format($avg, 2);
+          $avgx = number_format($avg, 0);
 
           while ($row = @pg_fetch_row($res)) {
               $jutsu[$i++] = $row[7];
@@ -349,11 +349,11 @@ $id = @$_GET['id'];
              </div>
              <div id="bang-ninja-thong-tin">
                 <span style="font-weight: bold;font-size:30px;"><?php echo $point; ?></span> điểm&nbsp;&nbsp;&nbsp;&nbsp;
-                <span style="font-weight: bold;font-size:30px;"><?php echo " $cost$"; ?><br/></span>
+                <span id="money"style="font-weight: bold;font-size:30px;"><?php echo " $cost$"; ?><br/></span>
                 <span style="font-weight: bold;font-size:30px;">
                    <?php echo $sum; ?></span> nhiệm vụ &nbsp;&nbsp;&nbsp;&nbsp;
                 <span style="font-weight: bold;font-size:30px;">    
-                   <?php echo " $avgx "; ?></span>thành công
+                   <?php echo " $avgx"; ?></span>% thành công
                 <br/>
                 <?php
                 for ($j = 0; $j < $i; $j++) {
@@ -362,7 +362,7 @@ $id = @$_GET['id'];
                 ?>
                 <br/>
                 <span style="font-weight: bold;font-size:25px;">Thông tin</span><br/>
-                <p><?php echo $info; ?></p>
+                <p align="justify"><?php echo $info; ?></p>
              </div>
           </div>
           <?php

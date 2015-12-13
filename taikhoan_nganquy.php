@@ -83,9 +83,9 @@ $id = @$_GET['id'];
          $row = @pg_fetch_row($res);
          ?>
          <div id="ngan-quy-x">
-            <div id="ngan-quy-xy1">
+            <div id="ngan-quy-xy1" style="text-align: center;">
                 <?php
-                echo "Ngân Quỹ:&nbsp;&nbsp;&nbsp;<span style ='font-family:calibri;font-size:30pt;font-weight:bold'>$row[0]$</span>";
+                echo "Ngân Quỹ:&nbsp;&nbsp;&nbsp;<span id = 'money' style ='font-size:30pt;font-weight:bold'>$row[0]$</span>";
                 ?>
             </div>
             <div id="ngan-quy-xy2">
@@ -99,9 +99,11 @@ $id = @$_GET['id'];
 
          <?php
          $res = @pg_query($conn, "select money_time, money_amount from customer_money where customer_id = "
-                         . "(select customer_id from customer where customer_username = '$id')");
+                         . "(select customer_id from customer where customer_username = '$id') order by money_time desc");
          while (@$row = @pg_fetch_row($res)) {
-             echo "<div id ='ngan-quy-content-row'><div class = 'col-take-3'>$row[0]</div><div class = 'col-take-1'>$row[1]$</div></div>";
+             if(strrpos($row[1], "-")!==0)
+                     $row[1] = "+".$row[1];
+             echo "<div id ='ngan-quy-content-row'><div class = 'col-take-3'>$row[0]</div><div id='money' class = 'col-take-1'>$row[1]$</div></div>";
          }
          ?>
          <a href="#" class="modal" id="modal-one" aria-hidden="true"></a>
