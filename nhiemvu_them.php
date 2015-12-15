@@ -317,7 +317,7 @@ $id = @$_GET['id'];
 ////                $timezone = 'Asia/Saigon';
 ////                $dtUtcDate = strtotime($dateStr);
 ////                echo $dtUtcDate;
-                  ?>
+            ?>
             <div id="form-nhiem-vu-mo-ta" style="text-align: center;">
                <span style ='color:white;font-family:Verdana;font-size:14pt;'>Mô tả Nhiệm Vụ<br/><br/></span>
                <textarea style="overflow: hidden" data-autoresize rows="4" cols="40" name="mota" id="nhiem-vu-mo-ta" placeholder="  Mô tả gì đó..."></textarea>
@@ -341,17 +341,16 @@ $id = @$_GET['id'];
              $start = date_create($ninmu_starttime);
              $time2 = date_diff($start, $end);
              $s = $time2->format("day %d, hour %h, minutes %i");
-             if($end < $start) {
+             if ($end < $start) {
                  echo "thời gian kết thúc nhỏ hơn thời gian bắt đầu!<br/>";
              } else {
 //              $res = pg_query($conn, "insert into ninmu(ninmu_name, ninmu_teampoint, ninmu_time_start, ninmu_time_end, ninmu_description)"
 //                      . "values('$ninmu_ten', $ninmu_point, '$ninmu_starttime', '$ninmu_endtime', '$ninmu_mota')");
-                 
              }
              //echo "$s, $s2";
              $end2 = $start;
              date_add($end2, $time2);
-         //    $end3 = date_format($end2, "Y-m-d H:i:m");
+             //    $end3 = date_format($end2, "Y-m-d H:i:m");
              //echo "</br>thesecond: $s, ketthuc: $end3;</div>";
 //              $res = pg_query($conn, "insert into ninmu(ninmu_name, ninmu_teampoint, ninmu_time_start, ninmu_time_end, ninmu_description)"
 //                      . "values('$ninmu_ten', $ninmu_point, '$ninmu_starttime', '$ninmu_endtime', '$ninmu_mota')");
@@ -360,20 +359,312 @@ $id = @$_GET['id'];
              $count_skill = 0;
              while (@$ninmu_skill[$count_skill]) {
                  echo "$ninmu_skill[$count_skill]: ";
-                 $res = pg_query($conn, "Select ninja_id from ninja natural join ninja_jutsu where jutsu_id = $ninmu_skill[$count_skill] order by ninja_cost asc");
+                 $res = pg_query($conn, "Select ninja_id, ninja_cost, sato_id, ninja_point, ninja_ninmu_success, ninja_ninmu_fail "
+                         . "from ninja natural join ninja_jutsu natural join sato_ninja "
+                         . "where jutsu_id = $ninmu_skill[$count_skill] order by ninja_cost asc");
                  $i = 0;
                  while ($row = @pg_fetch_row($res)) {
-                     echo "$row[0] ";
+                     //echo "$row[0], $row[1]  ";
                      $result_ninja[$count_skill][$i] = $row[0];
+                     $result_ninja_cost[$count_skill][$i] = $row[1];
+                     $result_ninja_sato[$count_skill][$i] = $row[2];
+                     $result_ninja_point[$count_skill][$i] = $row[3];
+                     $sum = $row[4] + $row[5];
+                     $avg = $row[4] * 100 / $sum;
+                     $result_ninja_ratio[$count_skill][$i] = number_format($avg, 0);
                      $i++;
                  }
                  $count_skill++;
                  echo "</br>";
              }
+
+             function return_team($array, $n) {
+                 $array_return[20];
+                 $nx = 0;
+                 for ($i = 1; $i < $n; $i++) {
+                     for ($j = 0; $j < $i; $j++) {
+                         if ($array[$i] == $array[$j]) {
+                             $array[$i] = -1;
+                         }
+                     }
+                 }
+                 for ($i = 0; $i < $n; $i++) {
+                     if ($array[$i] != -1) {
+                         $array_return[$nx] = $array[$i];
+                         $nx++;
+                     }
+                 }
+                 return $array_return;
+             }
+
+             function return_team_with_cost($array, $n, $array_cost) {
+                 $array_return;
+                 $nx = 0;
+                 for ($i = 1; $i < $n; $i++) {
+                     for ($j = 0; $j < $i; $j++) {
+                         if ($array[$i] == $array[$j]) {
+                             $array[$i] = -1;
+                         }
+                     }
+                 }
+                 for ($i = 0; $i < $n; $i++) {
+                     if ($array[$i] != -1) {
+                         $array_return[$nx] = $array[$i];
+                         $array_return[$nx + 10] = $array_cost[$i];
+                         $nx++;
+                     }
+                 }
+                 return $array_return;
+             }
+
+             function return_team_with_ratio($array, $n, $array_sato, $point, $array_ratio) {
+                 $array_return;
+                 $nx = 0;
+                 for ($i = 1; $i < $n; $i++) {
+                     for ($j = 0; $j < $i; $j++) {
+                         if ($array[$i] == $array[$j]) {
+                             $array[$i] = -1;
+                         }
+                     }
+                 }
+                 $i = 0;
+                 $sum = 0;
+                 while (@$array_ratio[$i]) {
+                     $sum += $array_ratio[$i];
+                     $i++;
+                 }
+                 $ratiox = $sum / $i;
+                 $ratio = number_format($ratiox, 0);
+                 echo "$ratio ";
+                 for ($i = 0; $i < $n; $i++) {
+                     if ($array[$i] != -1) {
+                         $array_return[$nx] = $array[$i];
+                         if (!$array_sato[$i]) {
+                             $ratio -= 5;
+                         }
+                         
+                         $nx++;
+                     }
+                 }
+                 $ratio += $point / 2;
+                 $array_return[10] = $ratio;
+                 return $array_return;
+             }
+
              $count_ninja = 0;
              $count_team = 0;
-             $count_skill = 1;
+             $team_money_value = 10000;
+             $team_money;
+             $team_ratio_value = -1;
+             $team_ratio;
+             
              $count_ninja0 = $count_ninja1 = $count_ninja2 = $count_ninja3 = $count_ninja4 = $count_ninja5 = $count_ninja6 = 0;
+             while (@$result_ninja[0][$count_ninja0]) {
+                 if ($count_skill == 1) {
+                     $array[0] = $result_ninja[0][$count_ninja0];
+                     $value = $result_ninja_cost[0][$count_ninja0];
+                     if ($team_money_value > $value) {
+                         $team_money = $array;
+                         $team_money_value = $value;
+                     }
+                     if ($result_ninja_sato[0][$count_ninja0] != $ninmu_lang)
+                         $array_sato[0] = 0;
+                     else $array_sato[0] = 1;
+                     $array_ratio[0] = $result_ninja_ratio[0][$count_ninja0];
+                     $point = $result_ninja_point[0][$count_ninja0] - $ninmu_point;
+                     $arrayy = return_team_with_ratio($array, $count_skill, $array_sato, $point, $array_ratio);
+                     if ($arrayy[10] > $team_ratio_value) {
+                         $team_ratio = $arrayy;
+                         $team_ratio_value = $arrayy[10];
+                     }
+                     $count_ninja0++;
+                 } else {
+                     $count_ninja1 = 0;
+                     while (@$result_ninja[1][$count_ninja1]) {
+                         if ($count_skill == 2) {
+                             $array[0] = $result_ninja[0][$count_ninja0];
+                             $array_cost[0] = $result_ninja_cost[0][$count_ninja0];
+                             $array[1] = $result_ninja[1][$count_ninja1];
+                             $array_cost[1] = $result_ninja_cost[1][$count_ninja1];
+                             $arrayx = return_team_with_cost($array, 2, $array_cost);
+                             $i = 10;
+                             $value = 0;
+                             while (@$arrayx[$i]) {
+                                 $value += $arrayx[$i];
+                                 $i++;
+                             }
+                             if ($team_money_value > $value) {
+
+                                 $team_money = $arrayx;
+                                 $team_money_value = $value;
+                             }
+                             $count_ninja1++;
+                         } else {
+                             $count_ninja2 = 0;
+                             while (@$result_ninja[2][$count_ninja2]) {
+                                 if ($count_skill == 3) {
+                                     $array[0] = $result_ninja[0][$count_ninja0];
+                                     $array_cost[0] = $result_ninja_cost[0][$count_ninja0];
+                                     $array[1] = $result_ninja[1][$count_ninja1];
+                                     $array_cost[1] = $result_ninja_cost[1][$count_ninja1];
+                                     $array[2] = $result_ninja[2][$count_ninja2];
+                                     $array_cost[2] = $result_ninja_cost[2][$count_ninja2];
+                                     $arrayx = return_team_with_cost($array, 3, $array_cost);
+                                     $i = 10;
+                                     $value = 0;
+                                     while (@$arrayx[$i]) {
+                                         $value += $arrayx[$i];
+                                         $i++;
+                                     }
+
+                                     if ($team_money_value > $value) {
+                                         $team_money = $arrayx;
+                                         $team_money_value = $value;
+                                     }
+                                     $count_ninja2++;
+                                 } else {
+                                     $count_ninja3 = 0;
+                                     while (@$result_ninja[3][$count_ninja3]) {
+                                         if ($count_skill == 4) {
+                                             $array[0] = $result_ninja[0][$count_ninja0];
+                                             $array_cost[0] = $result_ninja_cost[0][$count_ninja0];
+                                             $array[1] = $result_ninja[1][$count_ninja1];
+                                             $array_cost[1] = $result_ninja_cost[1][$count_ninja1];
+                                             $array[2] = $result_ninja[2][$count_ninja2];
+                                             $array_cost[2] = $result_ninja_cost[2][$count_ninja2];
+                                             $array[3] = $result_ninja[3][$count_ninja3];
+                                             $array_cost[3] = $result_ninja_cost[3][$count_ninja3];
+                                             $arrayx = return_team_with_cost($array, $count_skill, $array_cost);
+                                             $i = 10;
+                                             $value = 0;
+                                             while (@$arrayx[$i]) {
+                                                 $value += $arrayx[$i];
+                                                 $i++;
+                                             }
+                                             if ($team_money_value > $value) {
+                                                 $team_money = $arrayx;
+                                                 $team_money_value = $value;
+                                             }
+                                             $count_ninja3++;
+                                         } else {
+                                             $count_ninja4 = 0;
+                                             while (@$result_ninja[4][$count_ninja4]) {
+                                                 if ($count_skill == 5) {
+                                                     $array[0] = $result_ninja[0][$count_ninja0];
+                                                     $array_cost[0] = $result_ninja_cost[0][$count_ninja0];
+                                                     $array[1] = $result_ninja[1][$count_ninja1];
+                                                     $array_cost[1] = $result_ninja_cost[1][$count_ninja1];
+                                                     $array[2] = $result_ninja[2][$count_ninja2];
+                                                     $array_cost[2] = $result_ninja_cost[2][$count_ninja2];
+                                                     $array[3] = $result_ninja[3][$count_ninja3];
+                                                     $array_cost[3] = $result_ninja_cost[3][$count_ninja3];
+                                                     $array[4] = $result_ninja[4][$count_ninja4];
+                                                     $array_cost[4] = $result_ninja_cost[4][$count_ninja4];
+
+                                                     $arrayx = return_team_with_cost($array, $count_skill, $array_cost);
+                                                     $i = 10;
+                                                     $value = 0;
+                                                     while (@$arrayx[$i]) {
+                                                         $value += $arrayx[$i];
+                                                         $i++;
+                                                     }
+                                                     if ($team_money_value > $value) {
+                                                         $team_money = $arrayx;
+                                                         $team_money_value = $value;
+                                                     }
+                                                     $count_ninja4++;
+                                                 } else {
+                                                     $count_ninja5 = 0;
+                                                     while (@$result_ninja[5][$count_ninja5]) {
+                                                         if ($count_skill == 6) {
+                                                             $array[0] = $result_ninja[0][$count_ninja0];
+                                                             $array_cost[0] = $result_ninja_cost[0][$count_ninja0];
+                                                             $array[1] = $result_ninja[1][$count_ninja1];
+                                                             $array_cost[1] = $result_ninja_cost[1][$count_ninja1];
+                                                             $array[2] = $result_ninja[2][$count_ninja2];
+                                                             $array_cost[2] = $result_ninja_cost[2][$count_ninja2];
+                                                             $array[3] = $result_ninja[3][$count_ninja3];
+                                                             $array_cost[3] = $result_ninja_cost[3][$count_ninja3];
+                                                             $array[4] = $result_ninja[4][$count_ninja4];
+                                                             $array_cost[4] = $result_ninja_cost[4][$count_ninja4];
+                                                             $array[5] = $result_ninja[5][$count_ninja5];
+                                                             $array_cost[5] = $result_ninja_cost[5][$count_ninja5];
+
+                                                             $arrayx = return_team_with_cost($array, $count_skill, $array_cost);
+                                                             $i = 10;
+                                                             $value = 0;
+                                                             while (@$arrayx[$i]) {
+                                                                 $value += $arrayx[$i];
+                                                                 $i++;
+                                                             }
+                                                             if ($team_money_value > $value) {
+                                                                 $team_money = $arrayx;
+                                                                 $team_money_value = $value;
+                                                             }
+                                                             $count_ninja5++;
+                                                         } else {
+                                                             $count_ninja6 = 0;
+                                                             while (@$result_ninja[6][$count_ninja6]) {
+                                                                 $array[0] = $result_ninja[0][$count_ninja0];
+                                                                 $array_cost[0] = $result_ninja_cost[0][$count_ninja0];
+                                                                 $array[1] = $result_ninja[1][$count_ninja1];
+                                                                 $array_cost[1] = $result_ninja_cost[1][$count_ninja1];
+                                                                 $array[2] = $result_ninja[2][$count_ninja2];
+                                                                 $array_cost[2] = $result_ninja_cost[2][$count_ninja2];
+                                                                 $array[3] = $result_ninja[3][$count_ninja3];
+                                                                 $array_cost[3] = $result_ninja_cost[3][$count_ninja3];
+                                                                 $array[4] = $result_ninja[4][$count_ninja4];
+                                                                 $array_cost[4] = $result_ninja_cost[4][$count_ninja4];
+                                                                 $array[5] = $result_ninja[5][$count_ninja5];
+                                                                 $array_cost[5] = $result_ninja_cost[5][$count_ninja5];
+                                                                 $array[6] = $result_ninja[6][$count_ninja6];
+                                                                 $array_cost[6] = $result_ninja_cost[6][$count_ninja6];
+
+                                                                 $arrayx = return_team_with_cost($array, $count_skill, $array_cost);
+                                                                 $i = 10;
+                                                                 $value = 0;
+                                                                 while (@$arrayx[$i]) {
+                                                                     $value += $arrayx[$i];
+                                                                     $i++;
+                                                                 }
+                                                                 if ($team_money_value > $value) {
+                                                                     $team_money = $arrayx;
+                                                                     $team_money_value = $value;
+                                                                 }
+                                                                 $count_ninja6++;
+                                                             }
+                                                             $count_ninja5++;
+                                                         }
+                                                     }
+                                                     $count_ninja4++;
+                                                 }
+                                             }
+                                             $count_ninja3++;
+                                         }
+                                     }
+                                     $count_ninja2++;
+                                 }
+                             }
+                             $count_ninja1++;
+                         }
+                     }
+                     $count_ninja0++;
+                 }
+             }
+             $i = 0;
+             echo "this is team money: ";
+             while (@$team_money[$i]) {
+                 echo "$team_money[$i] ";
+                 $i++;
+             }
+             echo " voi gia $team_money_value<br/>";
+             echo "this is team ratio: ";
+             $i = 0;
+             while (@$team_ratio[$i]) {
+                 echo "$team_ratio[$i] ";
+                 $i++;
+             }
+             echo " voi tile $team_ratio_value<br/>";
 //              while (@$result_ninja[0][$count_ninja]) {
 //                  $string = $result_ninja[0][$count_ninja];
 //                  echo "$string ";
@@ -388,9 +679,6 @@ $id = @$_GET['id'];
 //                  $count_ninja++;
 //              }
              while (@$result_ninja[0][$count_ninja0]) {
-                 if (!@$result_team[$count_team - 1][0] && @$result_team[$count_team - 2][0]) {
-                     $count_team--;
-                 }
                  $result_team[$count_team][0] = $result_ninja[0][$count_ninja0];
                  $count_ninja1 = 0;
                  if (!@$result_ninja[1][$count_ninja1]) {
@@ -462,7 +750,6 @@ $id = @$_GET['id'];
                                                                  if (!@$result_team[$count_team - 1][0] && @$result_team[$count_team - 2][0]) {
                                                                      $count_team--;
                                                                  }
-
                                                                  $result_team[$count_team][0] = $result_ninja[0][$count_ninja0];
                                                                  $result_team[$count_team][1] = $result_ninja[1][$count_ninja1];
                                                                  $result_team[$count_team][2] = $result_ninja[2][$count_ninja2];
