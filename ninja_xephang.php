@@ -107,27 +107,6 @@ $id = @$_GET['id'];
              $jutsu_logo[$i][$j++] = $row[6];
              $ninja_sato[$i] = $row[7];
          }
-
-//         function swap(&$a, &$b) {
-//             $temp = $a;
-//             $a = $b;
-//             $b = $temp;
-//         }
-//
-//         for ($j = 0; $j < $i; $j++)
-//             for ($k = $j + 1; $k < $i + 1; $k++) {
-//                 if (intval($ninja_point[$j]) < intval($ninja_point[$k])) {
-//                     swap($ninja_point[$j], $ninja_point[$k]);
-//                     swap($ninja_name[$j], $ninja_name[$k]);
-//                     swap($ninja_avatar[$j], $ninja_avatar[$k]);
-//                     swap($ninja_ninmu_success[$j], $ninja_ninmu_success[$k]);
-//                     swap($ninja_ninmu_fail[$j], $ninja_ninmu_fail[$k]);
-//                     swap($ninja_cost[$j], $ninja_cost[$k]);
-//                     swap($jutsu_logo[$j], $jutsu_logo[$k]);
-//                     swap($ninja_sato[$j], $ninja_sato[$k]);
-//                 }
-//             }
-
          for ($j = 0; $j < $i + 1; $j++) {
              $count = $j + 1;
              echo "<div class ='ninja-row'>

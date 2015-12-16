@@ -131,7 +131,7 @@ $id = @$_GET['id'];
                     $res = @pg_query($conn, "select customer_id from customer where customer_username = '$id'");
                     $row2 = @pg_fetch_row($res);
                     $today = date('Y-m-d H:i:s');
-                    $res = pg_query($conn, "insert into customer_money values('$row2[0]','$today', '$row[0]')");
+                    $res = pg_query($conn, "insert into customer_money values('$row2[0]','$today', $row[0])");
                     $res = pg_query($conn, "delete from card where card_id = '$the' ");
                     //  header("Location: taikhoan_nganquy.php?id=$id&pass=$pass");
                 }

@@ -134,8 +134,32 @@ jQuery(document).ready(function ($) {
             })
         });
     }
+    $('.team-random-father').click(function () {
+        $(this).addClass('current');
+        $('.team-money-father').removeClass('current');
+        $('.team-ratio-father').removeClass('current');
+        $('#team-ninja-random').show();
+        $('#team-ninja-money').hide();
+        $('#team-ninja-ratio').hide();
+    });
+    $('.team-ratio-father').click(function () {
+        $(this).addClass('current');
+        $('.team-random-father').removeClass('current');
+        $('.team-money-father').removeClass('current');
+        $('#team-ninja-random').hide();
+        $('#team-ninja-money').hide();
+        $('#team-ninja-ratio').show();
+    });
+    $('.team-money-father').click(function () {
+        $(this).addClass('current');
+        $('.team-ratio-father').removeClass('current');
+        $('.team-random-father').removeClass('current');
+        $('#team-ninja-random').hide();
+        $('#team-ninja-money').show();
+        $('#team-ninja-ratio').hide();
+    });
 
-
+    
 });
 
 jQuery.fn.putCursorAtEnd = function () {
@@ -189,6 +213,7 @@ $(document).ready(function () {
         $(this).addClass('current');
         $(this).children('.ninja-description').show();
     });
+    
 //textinput effect
     (function () {
         // trim polyfill : https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/Trim

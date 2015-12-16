@@ -9,6 +9,12 @@ $(function() {
         });
 
         $('#example-movie').barrating('set', 'Mediocre');
+        
+        $('#example-movie2').barrating('show', {
+            theme: 'bars-movie'
+        });
+
+        $('#example-movie2').barrating('set', 'Mediocre');
 
         $('#example-square').barrating('show', {
             theme: 'bars-square',
