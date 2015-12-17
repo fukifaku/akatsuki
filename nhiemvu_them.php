@@ -358,8 +358,8 @@ $id = @$_GET['id'];
 //                      . "values('$ninmu_ten', $ninmu_point, '$ninmu_starttime', '$ninmu_endtime', '$ninmu_mota')");
              }
              //echo "$s, $s2";
-             $end2 = $start;
-             date_add($end2, $time2);
+             //$end2 = $start;
+             //date_add($end2, $time2);
              //    $end3 = date_format($end2, "Y-m-d H:i:m");
              //echo "</br>thesecond: $s, ketthuc: $end3;</div>";
 //              $res = pg_query($conn, "insert into ninmu(ninmu_name, ninmu_teampoint, ninmu_time_start, ninmu_time_end, ninmu_description)"
@@ -367,24 +367,45 @@ $id = @$_GET['id'];
 //              
              $count = 0;
              $count_skill = 0;
+             $today = date('Y-m-d H:i:s');
              while (@$ninmu_skill[$count_skill]) {
                  // echo "$ninmu_skill[$count_skill]: ";
                  $res = pg_query($conn, "Select ninja_id, ninja_cost, sato_id, ninja_point, ninja_ninmu_success, ninja_ninmu_fail "
                          . "from ninja natural join ninja_jutsu natural join sato_ninja "
                          . "where jutsu_id = $ninmu_skill[$count_skill] order by ninja_cost asc");
                  $i = 0;
+                 $k= 0;
                  $numNinja[$count_skill] = 0;
                  while ($row = @pg_fetch_row($res)) {
                      //echo "$row[0], $row[1]  ";
-                     $result_ninja[$count_skill][$i] = $row[0];
-                     $result_ninja_cost[$count_skill][$i] = $row[1];
-                     $result_ninja_sato[$count_skill][$i] = $row[2];
-                     $result_ninja_point[$count_skill][$i] = $row[3];
-                     $sum = $row[4] + $row[5];
-                     $avg = $row[4] * 100 / $sum;
-                     $result_ninja_ratio[$count_skill][$i] = number_format($avg, 0);
-                     $numNinja[$count_skill] ++;
-                     $i++;
+                     
+                     $check_available = 1;
+                     $res2 = pg_query($conn, "select ninja_start, ninja_end from ninja_schedule where ninja_id = $row[0]");
+                     while ($row2 = @pg_fetch_row($res2)) {
+                         if ($row2[0] <= $ninmu_starttime && $row2[1] <= $ninmu_starttime) {
+                             echo "bi trung $k ninja $row[0]<br/>";
+                             $check_available = 0;
+                             break;
+                         }
+                         if ($row2[0] <= $ninmu_endtime && $row2[1] = $ninmu_endtime) {
+                             $check_available = 0;
+                             break;
+                         }
+                     }
+                     
+                     if ($check_available ==1) {
+                         echo "van check $k ninja $row[0]";
+                         $result_ninja[$count_skill][$i] = $row[0];
+                         $result_ninja_cost[$count_skill][$i] = $row[1];
+                         $result_ninja_sato[$count_skill][$i] = $row[2];
+                         $result_ninja_point[$count_skill][$i] = $row[3];
+                         $sum = $row[4] + $row[5];
+                         $avg = $row[4] * 100 / $sum;
+                         $result_ninja_ratio[$count_skill][$i] = number_format($avg, 0);
+                         $numNinja[$count_skill] ++;
+                         $i++;
+                     }
+                     $k++;
                  }
                  $count_skill++;
                  //echo "</br>";
@@ -910,6 +931,7 @@ $id = @$_GET['id'];
                      $count_ninja0++;
                  }
              }
+             $kt = 0;
              ?>
 
              <div id ="team-result">
@@ -959,7 +981,7 @@ $id = @$_GET['id'];
                     $i++;
                 }
                 ?>
-                <input type="button" name="Release_random" onclick="document.write('<?php team_random() ?>');" value="Chọn Đội này"/>
+                <input type="button" id="submit-team-random" name="Release_random" onclick="document.write('<?php submit_team_random($team_random) ?>');" value="Chọn Đội này"/>
 
              </div>
              <div id="team-ninja-ratio">
@@ -986,7 +1008,7 @@ $id = @$_GET['id'];
                     $i++;
                 }
                 ?>
-                <input type="button" name="Release_ratio" onclick="document.write('<?php team_ratio() ?>');" value="Chọn Đội này"/>
+                <input type="button" id="submit-team-ratio" name="Release_ratio" onclick="document.write('<?php submit_team_ratio($team_ratio) ?>');" value="Chọn Đội này"/>
              </div>
              <div id="team-ninja-money">
                  <?php
@@ -1012,132 +1034,143 @@ $id = @$_GET['id'];
                     $i++;
                 }
                 ?>
-                <input id="submit-team-money" type="button" name="Release_money" onclick="document.write('<?php team_money() ?>');" value="Chọn Đội Money"/>
+                <input id="submit-team-money" type="button" name="Release_money" onclick="document.write('<?php submit_team_money() ?>');" value="Chọn Đội Money"/>
              </div>
              <?php
+         }
+
+         function submit_team_random($team_random) {
+             global $kt;
+             if (!$kt) {
+                 global $id, $conn, $team_random_value_cost,
+                 $team_random_value_ratio, $ninmu_endtime,
+                 $ninmu_lang, $ninmu_mota, $ninmu_point,
+                 $ninmu_skill, $ninmu_starttime, $ninmu_ten;
+                 $res = pg_query($conn, "select customer_id, customer_money from customer where customer_username='$id'");
+                 $row = pg_fetch_row($res);
+                 $cusid = $row[0];
+                 $cusmoney = $row[1];
+                 if ($cusmoney < $team_random_value_cost) {
+                     echo "không đủ tiền vui lòng nạp thêm!";
+                 } else {
+                     $res = pg_query($conn, "select count(ninmu_id) from ninmu");
+                     $row = pg_fetch_row($res);
+                     $ninmu_count = $row[0] + 1;
+                     $rand = rand(0, 100);
+                     if ($rand <= $team_random_value_ratio)
+                         $ninmu_succ = 1;
+                     else
+                         $ninmu_succ = 0;
+                     $res = pg_query($conn, "insert into ninmu values($ninmu_count,'$ninmu_ten', '$ninmu_mota','$ninmu_starttime','$ninmu_endtime', $team_random_value_cost, $team_random_value_ratio, 0, $ninmu_succ, $ninmu_point)");
+                     $res = pg_query($conn, "insert into ninmu_sato values($ninmu_count, $ninmu_lang)");
+                     $i = 0;
+                     while (@$ninmu_skill[$i]) {
+                         $nskill = $ninmu_skill[$i];
+                         pg_query("insert into ninmu_jutsu values($ninmu_count, $nskill)");
+                         $i++;
+                     }
+                     $i = 0;
+                     while (@$team_random[$i]) {
+                         $trandom = $team_random[$i];
+                         pg_query("insert into ninmu_ninja values($ninmu_count, $trandom)");
+                         $i++;
+                     }
+                     $today = date('Y-m-d H:i:s');
+                     pg_query($conn, "insert into customer_ninmu values($cusid, $ninmu_count, '$today')");
+                 }
+                 $kt = 1;
+             }
          }
          ?>
          <?php
 
-         function team_random() {
-             global $id, $conn, $team_random, $team_random_value_cost, 
-                     $team_random_value_ratio, $ninmu_endtime, 
-                     $ninmu_lang, $ninmu_mota, $ninmu_point, 
-                     $ninmu_skill, $ninmu_starttime, $ninmu_ten;
-             $res = pg_query($conn, "select customer_id, customer_money from customer where customer_username='$id'");
-             $row = pg_fetch_row($res);
-             $cusid = $row[0];
-             $cusmoney = $row[1];
-             if ($cusmoney < $team_random_value_cost) {
-                 echo "không đủ tiền vui lòng nạp thêm!";
-             } else {
-                 echo "done";
-                 $res = pg_query($conn, "select count(ninmu_id) from ninmu");
+         function submit_team_ratio($team_ratio) {
+             global $kt;
+             if (!$kt) {
+                 echo "fuck ratio";
+                 global $id, $conn, $team_ratio_value_cost, $team_ratio_value, $ninmu_endtime,
+                 $ninmu_lang, $ninmu_mota, $ninmu_point, $ninmu_skill, $ninmu_starttime, $ninmu_ten;
+                 $res = pg_query($conn, "select customer_id, customer_money from customer where customer_username='$id'");
                  $row = pg_fetch_row($res);
-                 $ninmu_count = $row[0] + 1;
-                 $rand = rand(0, 100);
-                 if ($rand <= $team_random_value_ratio)
-                     $ninmu_succ = 1;
-                 else
-                     $ninmu_succ = 0;
-                 $res = pg_query($conn, "insert into ninmu values($ninmu_count,'$ninmu_ten', '$ninmu_mota','$ninmu_starttime','$ninmu_endtime', $team_random_value_cost, $team_random_value_ratio, 0, $ninmu_succ, $ninmu_point)");
-                 $res = pg_query($conn, "insert into ninmu_sato values($ninmu_count, $ninmu_lang)");
-                 $i = 0;
-                 while (@$ninmu_skill[$i]) {
-                     $nskill = $ninmu_skill[$i];
-                     pg_query("insert into ninmu_jutsu values($ninmu_count, $nskill)");
-                     $i++;
+                 $cusid = $row[0];
+                 $cusmoney = $row[1];
+                 if ($cusmoney < $team_ratio_value_cost) {
+                     echo "không đủ tiền vui lòng nạp thêm!";
+                 } else {
+                     echo "done ratio";
+                     $res = pg_query($conn, "select count(ninmu_id) from ninmu");
+                     $row = pg_fetch_row($res);
+                     $ninmu_count = $row[0] + 1;
+                     $rand = rand(0, 100);
+                     if ($rand <= $team_ratio_value)
+                         $ninmu_succ = 1;
+                     else
+                         $ninmu_succ = 0;
+                     $ninmu_ten = $ninmu_ten . ' du ma no';
+                     $res = pg_query($conn, "insert into ninmu values($ninmu_count,'$ninmu_ten', '$ninmu_mota','$ninmu_starttime','$ninmu_endtime', $team_ratio_value_cost, $team_ratio_value, 0, $ninmu_succ, $ninmu_point)");
+                     $res = pg_query($conn, "insert into ninmu_sato values($ninmu_count, $ninmu_lang)");
+                     $i = 0;
+                     while (@$ninmu_skill[$i]) {
+                         $nskill = $ninmu_skill[$i];
+                         pg_query("insert into ninmu_jutsu values($ninmu_count, $nskill)");
+                         $i++;
+                     }
+                     $i = 0;
+                     while (@$team_ratio[$i]) {
+                         $trandom = $team_ratio[$i];
+                         pg_query("insert into ninmu_ninja values($ninmu_count, $trandom)");
+                         $i++;
+                     }
+                     $today = date('Y-m-d H:i:s');
+                     pg_query($conn, "insert into customer_ninmu values($cusid, $ninmu_count, '$today')");
                  }
-                 $i = 0;
-                 while (@$team_random[$i]) {
-                     $trandom = $team_random[$i];
-                     pg_query("insert into ninmu_ninja values($ninmu_count, $trandom)");
-                     $i++;
-                 }
-
-                 pg_query($conn, "insert into customer_ninmu values($cusid, $ninmu_count)");
+                 $kt = 1;
              }
          }
 
-         function team_ratio() {
-             global $id, $conn, $team_ratio, $team_ratio_value_cost, $team_ratio_value, $ninmu_endtime, $ninmu_lang, $ninmu_mota, $ninmu_point, $ninmu_skill, $ninmu_starttime, $ninmu_ten;
-             $res = pg_query($conn, "select customer_id, customer_money from customer where customer_username='$id'");
-             $row = pg_fetch_row($res);
-             $cusid = $row[0];
-             $cusmoney = $row[1];
-             if ($cusmoney < $team_ratio_value_cost) {
-                 echo "không đủ tiền vui lòng nạp thêm!";
-             } else {
-                 echo "done";
-                 $res = pg_query($conn, "select count(ninmu_id) from ninmu");
+         function submit_team_money() {
+             global $kt;
+             if (!$kt) {
+                 echo "fuckmoney";
+                 global $id, $conn, $team_money, $team_money_value, $team_money_value_ratio, $ninmu_endtime, $ninmu_lang, $ninmu_mota, $ninmu_point, $ninmu_skill, $ninmu_starttime, $ninmu_ten;
+                 $res = pg_query($conn, "select customer_id, customer_money from customer where customer_username='$id'");
                  $row = pg_fetch_row($res);
-                 $ninmu_count = $row[0] + 1;
-                 $rand = rand(0, 100);
-                 if ($rand <= $team_random_value_ratio)
-                     $ninmu_succ = 1;
-                 else
-                     $ninmu_succ = 0;
-                 //   echo $ninmu_count;
-                 // echo "<br/>$ninmu_ten, $ninmu_point,$ninmu_starttime,$ninmu_endtime, $ninmu_mota, $team_random_value_cost, $team_random_value_ratio, $ninmu_succ, sfsdfsdfsdf";
-                 //  echo "$ninmu_count,$ninmu_ten, $ninmu_mota,$ninmu_starttime,$ninmu_endtime, $team_random_value_cost, $team_random_value_ratio, 0, $ninmu_succ, $ninmu_point";
-                 //$res=pg_query($conn,"insert into ninmu values($ninmu_count, '$ninmu_ten')");
-                 $res = pg_query($conn, "insert into ninmu values($ninmu_count,'$ninmu_ten', '$ninmu_mota','$ninmu_starttime','$ninmu_endtime', $team_ratio_value_cost, $team_ratio_value, 0, $ninmu_succ, $ninmu_point)");
-                 $res = pg_query($conn, "insert into ninmu_sato values($ninmu_count, $ninmu_lang)");
-                 $i = 0;
-                 while (@$ninmu_skill[$i]) {
-                     $nskill = $ninmu_skill[$i];
-                     pg_query("insert into ninmu_jutsu values($ninmu_count, $nskill)");
-                     $i++;
+                 $cusid = $row[0];
+                 $cusmoney = $row[1];
+                 if ($cusmoney < $team_money_value) {
+                     echo "không đủ tiền vui lòng nạp thêm!";
+                 } else {
+                     echo "done";
+                     $res = pg_query($conn, "select count(ninmu_id) from ninmu");
+                     $row = pg_fetch_row($res);
+                     $ninmu_count = $row[0] + 1;
+                     $rand = rand(0, 100);
+                     if ($rand <= $team_random_value_ratio)
+                         $ninmu_succ = 1;
+                     else
+                         $ninmu_succ = 0;
+                     //   echo $ninmu_count;
+                     // echo "<br/>$ninmu_ten, $ninmu_point,$ninmu_starttime,$ninmu_endtime, $ninmu_mota, $team_random_value_cost, $team_random_value_ratio, $ninmu_succ, sfsdfsdfsdf";
+                     //  echo "$ninmu_count,$ninmu_ten, $ninmu_mota,$ninmu_starttime,$ninmu_endtime, $team_random_value_cost, $team_random_value_ratio, 0, $ninmu_succ, $ninmu_point";
+                     //$res=pg_query($conn,"insert into ninmu values($ninmu_count, '$ninmu_ten')");
+                     $res = pg_query($conn, "insert into ninmu values($ninmu_count,'$ninmu_ten', '$ninmu_mota','$ninmu_starttime','$ninmu_endtime', $team_money_value, $team_money_value_ratio, 0, $ninmu_succ, $ninmu_point)");
+                     $res = pg_query($conn, "insert into ninmu_sato values($ninmu_count, $ninmu_lang)");
+                     $i = 0;
+                     while (@$ninmu_skill[$i]) {
+                         $nskill = $ninmu_skill[$i];
+                         pg_query("insert into ninmu_jutsu values($ninmu_count, $nskill)");
+                         $i++;
+                     }
+                     $i = 0;
+                     while (@$team_money[$i]) {
+                         $trandom = $team_money[$i];
+                         pg_query("insert into ninmu_ninja values($ninmu_count, $trandom)");
+                         $i++;
+                     }
+                     $today = date('Y-m-d H:i:s');
+                     pg_query($conn, "insert into customer_ninmu values($cusid, $ninmu_count, '$today')");
                  }
-                 $i = 0;
-                 while (@$team_ratio[$i]) {
-                     $trandom = $team_ratio[$i];
-                     pg_query("insert into ninmu_ninja values($ninmu_count, $trandom)");
-                     $i++;
-                 }
-
-                 pg_query($conn, "insert into customer_ninmu values($cusid, $ninmu_count)");
-             }
-         }
-
-         function team_money() {
-             global $id, $conn, $team_money, $team_money_value, $team_money_value_ratio, $ninmu_endtime, $ninmu_lang, $ninmu_mota, $ninmu_point, $ninmu_skill, $ninmu_starttime, $ninmu_ten;
-             $res = pg_query($conn, "select customer_id, customer_money from customer where customer_username='$id'");
-             $row = pg_fetch_row($res);
-             $cusid = $row[0];
-             $cusmoney = $row[1];
-             if ($cusmoney < $team_money_value) {
-                 echo "không đủ tiền vui lòng nạp thêm!";
-             } else {
-                 echo "done";
-                 $res = pg_query($conn, "select count(ninmu_id) from ninmu");
-                 $row = pg_fetch_row($res);
-                 $ninmu_count = $row[0] + 1;
-                 $rand = rand(0, 100);
-                 if ($rand <= $team_random_value_ratio)
-                     $ninmu_succ = 1;
-                 else
-                     $ninmu_succ = 0;
-                 //   echo $ninmu_count;
-                 // echo "<br/>$ninmu_ten, $ninmu_point,$ninmu_starttime,$ninmu_endtime, $ninmu_mota, $team_random_value_cost, $team_random_value_ratio, $ninmu_succ, sfsdfsdfsdf";
-                 //  echo "$ninmu_count,$ninmu_ten, $ninmu_mota,$ninmu_starttime,$ninmu_endtime, $team_random_value_cost, $team_random_value_ratio, 0, $ninmu_succ, $ninmu_point";
-                 //$res=pg_query($conn,"insert into ninmu values($ninmu_count, '$ninmu_ten')");
-                 $res = pg_query($conn, "insert into ninmu values($ninmu_count,'$ninmu_ten', '$ninmu_mota','$ninmu_starttime','$ninmu_endtime', $team_money_value, $team_money_value_ratio, 0, $ninmu_succ, $ninmu_point)");
-                 $res = pg_query($conn, "insert into ninmu_sato values($ninmu_count, $ninmu_lang)");
-                 $i = 0;
-                 while (@$ninmu_skill[$i]) {
-                     $nskill = $ninmu_skill[$i];
-                     pg_query("insert into ninmu_jutsu values($ninmu_count, $nskill)");
-                     $i++;
-                 }
-                 $i = 0;
-                 while (@$team_money[$i]) {
-                     $trandom = $team_money[$i];
-                     pg_query("insert into ninmu_ninja values($ninmu_count, $trandom)");
-                     $i++;
-                 }
-
-                 pg_query($conn, "insert into customer_ninmu values($cusid, $ninmu_count)");
+                 $kt = 1;
              }
          }
          ?>

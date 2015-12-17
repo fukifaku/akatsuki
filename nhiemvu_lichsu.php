@@ -75,18 +75,63 @@ $id = @$_GET['id'];
       </div>
       <div id ="bang-lich-su-nhiem-vu">
          <div id="head-row">
-            <div class="col-take-1">rank</div>
-            <div class="col-take-1">avatar</div>
-            <div class="col-take-3">name</div>
-            <div class="col-take-1">point</div>
+            <div class="xcol-take-1-3">Ngày</div>
+            <div class="xcol-take-1-3">Làng</div>
+            <div class="xcol-take-1-3">Tên NV</div>
+            <div class="xcol-take-1-3">Giá</div>
+            <div class="xcol-take-1-3">Kết Quả</div>
          </div>
-         
-      </div>
+         <div>
+             <?php
+             $res = pg_query($conn, "select ninmu_id, customer_ninmu_date from customer_ninmu natural join customer where customer_username='$id' "
+                     . "order by customer_ninmu_date desc");
+             while ($row = @pg_fetch_row($res)) {
+                 ?>
+                <div class = "team-row">
+                   <div class = "team-name-row">
+                       <?php
+                       $resx = pg_query($conn, "select sato_logo, ninmu_name, ninmu_cost, ninmu_success from ninmu natural join ninmu_sato natural join sato"
+                               . " where ninmu_id = $row[0] ");
+                       $rowx = pg_fetch_row($resx);
+                       $ninmu_date = date_create($row[1]);
+                       $ninmu_date = date_format($ninmu_date, "d/m H:i");
+                       if ($rowx[3] == 0) {
+                           $ns = "Thất bại";
+                       } else {
+                           $ns = "Thành Công";
+                       }
+                       echo "<div class='xcol-take-1-3'>$ninmu_date </div>
+                            <div class='xcol-take-1-3'><img src = $rowx[0] class = 'img-radius' height='45px' width ='45px'/></div>
+                            <div class='xcol-take-1-3'>$rowx[1]</div>
+                            <div class='xcol-take-1-3'>$rowx[2]</div>
+                            <div class='xcol-take-1-3'>$ns</div>";
+                       ?>
+                   </div>
+                   <div class="team-ninja-row">
+                      <?php
+                      $resy = pg_query($conn, "select ninja_name, ninja_avatar, ninja_cost from ninja natural join ninmu_ninja"
+                              . " where ninmu_id = $row[0] ");
+                      while (@$rowy = pg_fetch_row($resy)) {
+                          echo "<div class='team-ninja-row-x'>
+                                <div class='xcol-take-1-3'><img src = $rowy[1] class ='img-circle-border' height = '40px' width='40px'/></div>
+                                <div class='xcol-take-1-3'>$rowy[0]</div>
+                                <div class='xcol-take-1-3'>$rowy[2]</div>
+                                </div>";
+                      }
+                      ?>
+                   </div>
+                </div>
+                <?php
+            }
+            ?>
 
-      <script src="js/jquery-2.1.4.min.js"></script>
-      <script src="js/main.js"></script>
-      <script src="js/classie.js"></script>
-      <script src="js/jquery.datetimepicker.full.js"></script>
+
+         </div>
+
+         <script src="js/jquery-2.1.4.min.js"></script>
+         <script src="js/main.js"></script>
+         <script src="js/classie.js"></script>
+         <script src="js/jquery.datetimepicker.full.js"></script>
    </body>
 
 </html>

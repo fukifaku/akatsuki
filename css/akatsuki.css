@@ -978,6 +978,78 @@ textarea {
 #submit-choose-team-x{
     
 }
+
+
+#bang-lich-su-nhiem-vu {
+    margin: 30px auto 60px 340px;
+    width: 700px;
+    background-color: #343642;
+    box-shadow: 
+        0 5px 15px 1px rgba(0, 0, 0, 0.6), 
+        0 0 200px 1px rgba(255, 255, 255, 0.5);
+}
+
+.team-row {
+    width: 700px;
+}
+
+.team-name-row {
+    padding-left: 10px;
+    width: 700px;
+    height: 70px;
+    border-bottom: 2px #454751 solid;
+}
+.team-name-row:hover {
+    background-color: #D85269;
+    //    border-left: 5px solid lightgreen;
+    cursor: pointer;
+}
+
+.current .team-name-row  {
+    background-color: #D85269;
+    //    border-left: 5px solid lightgreen;
+}
+.team-ninja-row {
+    background-color: #454751;
+    width: 700px;
+    display: none;
+    border-bottom: 2px #454751 solid;
+}
+.team-ninja-row-x{
+    height: 70px;
+    border-bottom: 2px solid  #343642;
+}
+.xcol-take-1{
+    padding: 10px;
+    position: relative;
+    float: left;
+    width: 100px;
+    color: white;
+   // background-color: red;
+}
+.xcol-take-1-3{
+    padding: 10px;
+    position: relative;
+    float: left;
+    width: 130px;
+    color: white;
+   // background-color: red;
+}
+.xcol-take-1-6{
+    padding: 10px;
+    position: relative;
+    float: left;
+    width: 160px;
+    color: white;
+   // background-color: red;
+}
+
+#submit-team-ratio{
+    
+}
+#submit-team-random{
+    margin-left: 700px;
+}
 #submit-team-money{
     margin-left: 300px; 
 }

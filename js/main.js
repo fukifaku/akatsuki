@@ -213,7 +213,12 @@ $(document).ready(function () {
         $(this).addClass('current');
         $(this).children('.ninja-description').show();
     });
-    
+    $('.team-row').click(function () {
+        $('.team-row').removeClass('current');
+        $('.team-ninja-row').hide();
+        $(this).addClass('current');
+        $(this).children('.team-ninja-row').show();
+    });
 //textinput effect
     (function () {
         // trim polyfill : https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/Trim
