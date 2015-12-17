@@ -26,15 +26,32 @@ RETURN NEW;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
-CREATE OR REPLACE FUNCTION insert_ninmu_ninja_insert_ninja_schedule() RETURNS trigger AS
+CREATE OR REPLACE FUNCTION insert_ninmu_ninja_insert_ninja_schedule_change_ninja() RETURNS trigger AS
 $$DECLARE
 nstart timestamp;
 nend timestamp;
+nsuc integer;
+suc integer;
+fai integer;
+val integer;
 BEGIN
 	select into nstart, nend "ninmu_start", "ninmu_end"
 	from ninmu
 	where ninmu_id = new.ninmu_id;
 	insert into ninja_schedule values(new.ninja_id, nstart, nend);
+	select into suc, fai "ninja_ninmu_success", "ninja_ninmu_fail"
+	from ninja
+	where ninja_id = new.ninja_id;
+	select into nsuc "ninmu_success"
+	from ninmu
+	where ninmu_id = new.ninmu_id;
+	if nsuc ==0 then
+	val = fai +1;
+	update ninja set ninja_ninmu_fail  = val;
+	else 
+	val = suc +1;
+	update ninja set ninja_ninmu_success = val;
+	end if;
 		
 RETURN NEW;
 END;
@@ -53,6 +70,7 @@ RETURN NEW;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
+
 create trigger before_ins_customer_money
 before insert
 on customer_money
@@ -63,7 +81,7 @@ create trigger after_ins_ninmu_ninja
 after insert
 on ninmu_ninja
 for each row
-execute procedure insert_ninmu_ninja_insert_ninja_schedule();
+execute procedure insert_ninmu_ninja_insert_ninja_schedule_change_ninja();
 
 create trigger after_ins_customer_ninmu
 after insert

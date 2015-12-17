@@ -350,13 +350,15 @@ $id = @$_GET['id'];
              $end = date_create($ninmu_endtime);
              $start = date_create($ninmu_starttime);
              $time2 = date_diff($start, $end);
+             date_default_timezone_set('Asia/Saigon');
+             $today = date('Y-m-d H:i:s');
+             $todayx = date_create($today);
              $s = $time2->format("day %d, hour %h, minutes %i");
              if ($end < $start) {
-                 echo "thời gian kết thúc nhỏ hơn thời gian bắt đầu!<br/>";
+                 echo "<span style='color:white;font-weight: bold;font-size:25px;'>thời gian kết thúc nhỏ hơn thời gian bắt đầu!</span>";
+             } else if ($start < $todayx){
+                 echo "<span style='color:white;font-weight: bold;font-size:25px;'>thời gian bắt đầu nhỏ hơn hiện tại!</span>";
              } else {
-//              $res = pg_query($conn, "insert into ninmu(ninmu_name, ninmu_teampoint, ninmu_time_start, ninmu_time_end, ninmu_description)"
-//                      . "values('$ninmu_ten', $ninmu_point, '$ninmu_starttime', '$ninmu_endtime', '$ninmu_mota')");
-             }
              //echo "$s, $s2";
              //$end2 = $start;
              //date_add($end2, $time2);
@@ -367,6 +369,7 @@ $id = @$_GET['id'];
 //              
              $count = 0;
              $count_skill = 0;
+             date_default_timezone_set('Asia/Saigon');
              $today = date('Y-m-d H:i:s');
              while (@$ninmu_skill[$count_skill]) {
                  // echo "$ninmu_skill[$count_skill]: ";
@@ -374,27 +377,29 @@ $id = @$_GET['id'];
                          . "from ninja natural join ninja_jutsu natural join sato_ninja "
                          . "where jutsu_id = $ninmu_skill[$count_skill] order by ninja_cost asc");
                  $i = 0;
-                 $k= 0;
+                 $k = 0;
                  $numNinja[$count_skill] = 0;
                  while ($row = @pg_fetch_row($res)) {
                      //echo "$row[0], $row[1]  ";
-                     
+
                      $check_available = 1;
                      $res2 = pg_query($conn, "select ninja_start, ninja_end from ninja_schedule where ninja_id = $row[0]");
                      while ($row2 = @pg_fetch_row($res2)) {
-                         if ($row2[0] <= $ninmu_starttime && $row2[1] <= $ninmu_starttime) {
-                             echo "bi trung $k ninja $row[0]<br/>";
+                         $nsch_start = date_create($row2[0]);
+                         $nsch_end = date_create($row2[1]);
+                         if ($nsch_start <= $start && $nsch_end <= $ninmu_starttime) {
+                             //    echo "bi trung $k ninja $row[0]<br/>";
                              $check_available = 0;
                              break;
                          }
-                         if ($row2[0] <= $ninmu_endtime && $row2[1] = $ninmu_endtime) {
+                         if ($nsch_start <= $ninmu_endtime && $nsch_end <= $ninmu_endtime) {
                              $check_available = 0;
                              break;
                          }
                      }
-                     
-                     if ($check_available ==1) {
-                         echo "van check $k ninja $row[0]";
+
+                     if ($check_available == 1) {
+                         // echo "van check $k ninja $row[0]";
                          $result_ninja[$count_skill][$i] = $row[0];
                          $result_ninja_cost[$count_skill][$i] = $row[1];
                          $result_ninja_sato[$count_skill][$i] = $row[2];
@@ -410,428 +415,356 @@ $id = @$_GET['id'];
                  $count_skill++;
                  //echo "</br>";
              }
+             if (!@$numNinja[0] || !@$numNinja[1] || !@$numNinja[2] || !@$numNinja[3] || !@$numNinja[4] || !@$numNinja[5] || !@$numNinja[6]) {
+                 echo "<span style='color:white;font-weight: bold;font-size:25px;'>Không có đội thỏa mãn!</span>";
+             } else {
 
-             function return_team($array, $n) {
-                 $array_return[20];
-                 $nx = 0;
-                 for ($i = 1; $i < $n; $i++) {
-                     for ($j = 0; $j < $i; $j++) {
-                         if ($array[$i] == $array[$j]) {
-                             $array[$i] = -1;
-                         }
-                     }
-                 }
-                 for ($i = 0; $i < $n; $i++) {
-                     if ($array[$i] != -1) {
-                         $array_return[$nx] = $array[$i];
-                         $nx++;
-                     }
-                 }
-                 return $array_return;
-             }
-
-             function return_team_with_cost($array, $n, $array_cost) {
-                 $array_return;
-                 $nx = 0;
-                 for ($i = 1; $i < $n; $i++) {
-                     for ($j = 0; $j < $i; $j++) {
-                         if ($array[$i] == $array[$j]) {
-                             $array[$i] = -1;
-                         }
-                     }
-                 }
-                 for ($i = 0; $i < $n; $i++) {
-                     if ($array[$i] != -1) {
-                         $array_return[$nx] = $array[$i];
-                         $array_return[$nx + 10] = $array_cost[$i];
-                         $nx++;
-                     }
-                 }
-                 return $array_return;
-             }
-
-             function return_team_with_ratio($array, $n, $array_sato, $point, $array_ratio) {
-                 $array_return;
-                 $nx = 0;
-                 for ($i = 1; $i < $n; $i++) {
-                     for ($j = 0; $j < $i; $j++) {
-                         if ($array[$i] == $array[$j]) {
-                             $array[$i] = -1;
-                         }
-                     }
-                 }
-                 $i = 0;
-                 $sum = 0;
-                 while (@$array_ratio[$i]) {
-                     $sum += $array_ratio[$i];
-                     $i++;
-                 }
-                 $ratiox = $sum / $i;
-                 $ratio = number_format($ratiox, 0);
-                 //echo "$ratio ";
-                 for ($i = 0; $i < $n; $i++) {
-                     if ($array[$i] != -1) {
-                         $array_return[$nx] = $array[$i];
-                         if (!$array_sato[$i]) {
-                             $ratio -= 5;
-                         }
-
-                         $nx++;
-                     }
-                 }
-                 $ratio += $point / 2;
-                 $array_return[10] = $ratio;
-                 return $array_return;
-             }
-
-             $count_ninja = 0;
-             $count_team = 0;
-             $team_money;
-             $team_money_value = 10000;
-             $team_money_value_ratio;
-             $team_ratio;
-             $team_ratio_value = -1;
-             $team_ratio_value_cost;
-             $team_random;
-             $team_random_value_cost;
-             $team_random_value_ratio;
-             $count_ninja0 = $count_ninja1 = $count_ninja2 = $count_ninja3 = $count_ninja4 = $count_ninja5 = $count_ninja6 = 0;
-             for ($i = 0; $i < $count_skill; $i++) {
-                 $random[$i] = rand(0, $numNinja[$i] - 1);
-             }
-             while (@$result_ninja[0][$count_ninja0]) {
-                 if ($count_skill == 1) {
-                     $array[0] = $result_ninja[0][$count_ninja0];
-                     if ($result_ninja_sato[0][$count_ninja0] != $ninmu_lang)
-                         $array_sato[0] = 0;
-                     else
-                         $array_sato[0] = 1;
-                     $array_ratio[0] = $result_ninja_ratio[0][$count_ninja0];
-                     $point = $result_ninja_point[0][$count_ninja0] - $ninmu_point;
-                     $value = $result_ninja_cost[0][$count_ninja0];
-                     $arrayy = return_team_with_ratio($array, $count_skill, $array_sato, $point, $array_ratio);
-                     if ($random[0] == $count_ninja0) {
-                         $team_random = $arrayy;
-                         $team_random_value_cost = $value;
-                         $team_random_value_ratio = $arrayy[10];
-                     }
-                     if ($arrayy[10] > $ninmu_ratio) {
-                         if ($team_money_value > $value) {
-                             $team_money = $array;
-                             $team_money_value = $value;
-                             $team_money_value_ratio = $arrayy[10];
-                         }
-                         if ($arrayy[10] > $team_ratio_value) {
-                             $team_ratio = $arrayy;
-                             $team_ratio_value = $arrayy[10];
-                             $team_ratio_value_cost = $value;
-                         }
-                     }
-                     $count_ninja0++;
-                 } else {
-                     $count_ninja1 = 0;
-                     while (@$result_ninja[1][$count_ninja1]) {
-                         if ($count_skill == 2) {
-                             $array[0] = $result_ninja[0][$count_ninja0];
-                             $array_cost[0] = $result_ninja_cost[0][$count_ninja0];
-                             $array[1] = $result_ninja[1][$count_ninja1];
-                             $array_cost[1] = $result_ninja_cost[1][$count_ninja1];
-                             $arrayx = return_team_with_cost($array, 2, $array_cost);
-                             if ($result_ninja_sato[0][$count_ninja0] != $ninmu_lang)
-                                 $array_sato[0] = 0;
-                             else
-                                 $array_sato[0] = 1;
-                             if ($result_ninja_sato[1][$count_ninja1] != $ninmu_lang)
-                                 $array_sato[1] = 0;
-                             else
-                                 $array_sato[1] = 1;
-                             $array_ratio[0] = $result_ninja_ratio[0][$count_ninja0];
-                             $array_ratio[1] = $result_ninja_ratio[1][$count_ninja1];
-                             $point = $result_ninja_point[0][$count_ninja0] + $result_ninja_point[1][$count_ninja1] - $ninmu_point;
-                             $arrayy = return_team_with_ratio($array, $count_skill, $array_sato, $point, $array_ratio);
-                             $i = 10;
-                             $value = 0;
-                             while (@$arrayx[$i]) {
-                                 $value += $arrayx[$i];
-                                 $i++;
+                 function return_team($array, $n) {
+                     $array_return[20];
+                     $nx = 0;
+                     for ($i = 1; $i < $n; $i++) {
+                         for ($j = 0; $j < $i; $j++) {
+                             if ($array[$i] == $array[$j]) {
+                                 $array[$i] = -1;
                              }
-                             if ($random[0] == $count_ninja0 && $random[1] == $count_ninja1) {
-                                 $team_random = $arrayy;
-                                 $team_random_value_cost = $value;
-                                 $team_random_value_ratio = $arrayy[10];
+                         }
+                     }
+                     for ($i = 0; $i < $n; $i++) {
+                         if ($array[$i] != -1) {
+                             $array_return[$nx] = $array[$i];
+                             $nx++;
+                         }
+                     }
+                     return $array_return;
+                 }
+
+                 function return_team_with_cost($array, $n, $array_cost) {
+                     $array_return;
+                     $nx = 0;
+                     for ($i = 1; $i < $n; $i++) {
+                         for ($j = 0; $j < $i; $j++) {
+                             if ($array[$i] == $array[$j]) {
+                                 $array[$i] = -1;
                              }
-                             if ($arrayy[10] > $ninmu_ratio) {
-                                 if ($team_money_value > $value) {
-                                     $team_money = $arrayx;
-                                     $team_money_value = $value;
-                                     $team_money_value_ratio = $arrayy[10];
+                         }
+                     }
+                     for ($i = 0; $i < $n; $i++) {
+                         if ($array[$i] != -1) {
+                             $array_return[$nx] = $array[$i];
+                             $array_return[$nx + 10] = $array_cost[$i];
+                             $nx++;
+                         }
+                     }
+                     return $array_return;
+                 }
+
+                 function return_team_with_ratio($array, $n, $array_sato, $point, $array_ratio) {
+                     $array_return;
+                     $nx = 0;
+                     for ($i = 1; $i < $n; $i++) {
+                         for ($j = 0; $j < $i; $j++) {
+                             if ($array[$i] == $array[$j]) {
+                                 $array[$i] = -1;
+                             }
+                         }
+                     }
+                     $i = 0;
+                     $sum = 0;
+                     while (@$array_ratio[$i]) {
+                         $sum += $array_ratio[$i];
+                         $i++;
+                     }
+                     $ratiox = $sum / $i;
+                     $ratio = number_format($ratiox, 0);
+                     //echo "$ratio ";
+                     for ($i = 0; $i < $n; $i++) {
+                         if ($array[$i] != -1) {
+                             $array_return[$nx] = $array[$i];
+                             if (!$array_sato[$i]) {
+                                 $ratio -= 5;
+                             }
+
+                             $nx++;
+                         }
+                     }
+                     $ratio += $point / 2;
+                     $array_return[10] = $ratio;
+                     return $array_return;
+                 }
+
+                 $count_ninja = 0;
+                 $count_team = 0;
+                 $team_money;
+                 $team_money_value = 10000;
+                 $team_money_value_ratio;
+                 $team_ratio;
+                 $team_ratio_value = -1;
+                 $team_ratio_value_cost;
+                 $team_random;
+                 $team_random_value_cost;
+                 $team_random_value_ratio;
+                 $count_ninja0 = $count_ninja1 = $count_ninja2 = $count_ninja3 = $count_ninja4 = $count_ninja5 = $count_ninja6 = 0;
+                 for ($i = 0; $i < $count_skill; $i++) {
+                     $random[$i] = rand(0, $numNinja[$i] - 1);
+                 }
+                 while (@$result_ninja[0][$count_ninja0]) {
+                     if ($count_skill == 1) {
+                         $array[0] = $result_ninja[0][$count_ninja0];
+                         if ($result_ninja_sato[0][$count_ninja0] != $ninmu_lang)
+                             $array_sato[0] = 0;
+                         else
+                             $array_sato[0] = 1;
+                         $array_ratio[0] = $result_ninja_ratio[0][$count_ninja0];
+                         $point = $result_ninja_point[0][$count_ninja0] - $ninmu_point;
+                         $value = $result_ninja_cost[0][$count_ninja0];
+                         $arrayy = return_team_with_ratio($array, $count_skill, $array_sato, $point, $array_ratio);
+                         if ($random[0] == $count_ninja0) {
+                             $team_random = $arrayy;
+                             $team_random_value_cost = $value;
+                             $team_random_value_ratio = $arrayy[10];
+                         }
+                         if ($arrayy[10] > $ninmu_ratio) {
+                             if ($team_money_value > $value) {
+                                 $team_money = $array;
+                                 $team_money_value = $value;
+                                 $team_money_value_ratio = $arrayy[10];
+                             }
+                             if ($arrayy[10] > $team_ratio_value) {
+                                 $team_ratio = $arrayy;
+                                 $team_ratio_value = $arrayy[10];
+                                 $team_ratio_value_cost = $value;
+                             }
+                         }
+                         $count_ninja0++;
+                     } else {
+                         $count_ninja1 = 0;
+                         while (@$result_ninja[1][$count_ninja1]) {
+                             if ($count_skill == 2) {
+                                 $array[0] = $result_ninja[0][$count_ninja0];
+                                 $array_cost[0] = $result_ninja_cost[0][$count_ninja0];
+                                 $array[1] = $result_ninja[1][$count_ninja1];
+                                 $array_cost[1] = $result_ninja_cost[1][$count_ninja1];
+                                 $arrayx = return_team_with_cost($array, 2, $array_cost);
+                                 if ($result_ninja_sato[0][$count_ninja0] != $ninmu_lang)
+                                     $array_sato[0] = 0;
+                                 else
+                                     $array_sato[0] = 1;
+                                 if ($result_ninja_sato[1][$count_ninja1] != $ninmu_lang)
+                                     $array_sato[1] = 0;
+                                 else
+                                     $array_sato[1] = 1;
+                                 $array_ratio[0] = $result_ninja_ratio[0][$count_ninja0];
+                                 $array_ratio[1] = $result_ninja_ratio[1][$count_ninja1];
+                                 $point = $result_ninja_point[0][$count_ninja0] + $result_ninja_point[1][$count_ninja1] - $ninmu_point;
+                                 $arrayy = return_team_with_ratio($array, $count_skill, $array_sato, $point, $array_ratio);
+                                 $i = 10;
+                                 $value = 0;
+                                 while (@$arrayx[$i]) {
+                                     $value += $arrayx[$i];
+                                     $i++;
                                  }
-                                 if ($arrayy[10] > $team_ratio_value) {
-                                     $team_ratio = $arrayy;
-                                     $team_ratio_value = $arrayy[10];
-                                     $team_ratio_value_cost = $value;
+                                 if ($random[0] == $count_ninja0 && $random[1] == $count_ninja1) {
+                                     $team_random = $arrayy;
+                                     $team_random_value_cost = $value;
+                                     $team_random_value_ratio = $arrayy[10];
                                  }
-                             }
-                             $count_ninja1++;
-                         } else {
-                             $count_ninja2 = 0;
-                             while (@$result_ninja[2][$count_ninja2]) {
-                                 if ($count_skill == 3) {
-                                     $array[0] = $result_ninja[0][$count_ninja0];
-                                     $array_cost[0] = $result_ninja_cost[0][$count_ninja0];
-                                     $array[1] = $result_ninja[1][$count_ninja1];
-                                     $array_cost[1] = $result_ninja_cost[1][$count_ninja1];
-                                     $array[2] = $result_ninja[2][$count_ninja2];
-                                     $array_cost[2] = $result_ninja_cost[2][$count_ninja2];
-                                     if ($result_ninja_sato[0][$count_ninja0] != $ninmu_lang)
-                                         $array_sato[0] = 0;
-                                     else
-                                         $array_sato[0] = 1;
-                                     if ($result_ninja_sato[1][$count_ninja1] != $ninmu_lang)
-                                         $array_sato[1] = 0;
-                                     else
-                                         $array_sato[1] = 1;
-                                     if ($result_ninja_sato[2][$count_ninja2] != $ninmu_lang)
-                                         $array_sato[2] = 0;
-                                     else
-                                         $array_sato[2] = 1;
-                                     $array_ratio[0] = $result_ninja_ratio[0][$count_ninja0];
-                                     $array_ratio[1] = $result_ninja_ratio[1][$count_ninja1];
-                                     $array_ratio[2] = $result_ninja_ratio[2][$count_ninja2];
-                                     $point = $result_ninja_point[0][$count_ninja0] + $result_ninja_point[1][$count_ninja1] + $result_ninja_point[2][$count_ninja2] - $ninmu_point;
-                                     $arrayy = return_team_with_ratio($array, $count_skill, $array_sato, $point, $array_ratio);
-                                     $arrayx = return_team_with_cost($array, 3, $array_cost);
-                                     $i = 10;
-                                     $value = 0;
-                                     while (@$arrayx[$i]) {
-                                         $value += $arrayx[$i];
-                                         $i++;
+                                 if ($arrayy[10] > $ninmu_ratio) {
+                                     if ($team_money_value > $value) {
+                                         $team_money = $arrayx;
+                                         $team_money_value = $value;
+                                         $team_money_value_ratio = $arrayy[10];
                                      }
-                                     if ($random[0] == $count_ninja0 && $random[1] == $count_ninja1 && $random[2] == $count_ninja2) {
-                                         $team_random = $arrayy;
-                                         $team_random_value_cost = $value;
-                                         $team_random_value_ratio = $arrayy[10];
+                                     if ($arrayy[10] > $team_ratio_value) {
+                                         $team_ratio = $arrayy;
+                                         $team_ratio_value = $arrayy[10];
+                                         $team_ratio_value_cost = $value;
                                      }
-                                     if ($arrayy[10] > $team_ratio) {
-                                         if ($team_money_value > $value) {
-                                             $team_money = $arrayx;
-                                             $team_money_value = $value;
-                                             $team_money_value_ratio = $arrayy[10];
+                                 }
+                                 $count_ninja1++;
+                             } else {
+                                 $count_ninja2 = 0;
+                                 while (@$result_ninja[2][$count_ninja2]) {
+                                     if ($count_skill == 3) {
+                                         $array[0] = $result_ninja[0][$count_ninja0];
+                                         $array_cost[0] = $result_ninja_cost[0][$count_ninja0];
+                                         $array[1] = $result_ninja[1][$count_ninja1];
+                                         $array_cost[1] = $result_ninja_cost[1][$count_ninja1];
+                                         $array[2] = $result_ninja[2][$count_ninja2];
+                                         $array_cost[2] = $result_ninja_cost[2][$count_ninja2];
+                                         if ($result_ninja_sato[0][$count_ninja0] != $ninmu_lang)
+                                             $array_sato[0] = 0;
+                                         else
+                                             $array_sato[0] = 1;
+                                         if ($result_ninja_sato[1][$count_ninja1] != $ninmu_lang)
+                                             $array_sato[1] = 0;
+                                         else
+                                             $array_sato[1] = 1;
+                                         if ($result_ninja_sato[2][$count_ninja2] != $ninmu_lang)
+                                             $array_sato[2] = 0;
+                                         else
+                                             $array_sato[2] = 1;
+                                         $array_ratio[0] = $result_ninja_ratio[0][$count_ninja0];
+                                         $array_ratio[1] = $result_ninja_ratio[1][$count_ninja1];
+                                         $array_ratio[2] = $result_ninja_ratio[2][$count_ninja2];
+                                         $point = $result_ninja_point[0][$count_ninja0] + $result_ninja_point[1][$count_ninja1] + $result_ninja_point[2][$count_ninja2] - $ninmu_point;
+                                         $arrayy = return_team_with_ratio($array, $count_skill, $array_sato, $point, $array_ratio);
+                                         $arrayx = return_team_with_cost($array, 3, $array_cost);
+                                         $i = 10;
+                                         $value = 0;
+                                         while (@$arrayx[$i]) {
+                                             $value += $arrayx[$i];
+                                             $i++;
                                          }
-                                         if ($arrayy[10] > $team_ratio_value) {
-                                             $team_ratio = $arrayy;
-                                             $team_ratio_value = $arrayy[10];
-                                             $team_ratio_value_cost = $value;
+                                         if ($random[0] == $count_ninja0 && $random[1] == $count_ninja1 && $random[2] == $count_ninja2) {
+                                             $team_random = $arrayy;
+                                             $team_random_value_cost = $value;
+                                             $team_random_value_ratio = $arrayy[10];
                                          }
-                                     }
-                                     $count_ninja2++;
-                                 } else {
-                                     $count_ninja3 = 0;
-                                     while (@$result_ninja[3][$count_ninja3]) {
-                                         if ($count_skill == 4) {
-                                             $array[0] = $result_ninja[0][$count_ninja0];
-                                             $array_cost[0] = $result_ninja_cost[0][$count_ninja0];
-                                             $array[1] = $result_ninja[1][$count_ninja1];
-                                             $array_cost[1] = $result_ninja_cost[1][$count_ninja1];
-                                             $array[2] = $result_ninja[2][$count_ninja2];
-                                             $array_cost[2] = $result_ninja_cost[2][$count_ninja2];
-                                             $array[3] = $result_ninja[3][$count_ninja3];
-                                             $array_cost[3] = $result_ninja_cost[3][$count_ninja3];
-                                             if ($result_ninja_sato[0][$count_ninja0] != $ninmu_lang)
-                                                 $array_sato[0] = 0;
-                                             else
-                                                 $array_sato[0] = 1;
-                                             if ($result_ninja_sato[1][$count_ninja1] != $ninmu_lang)
-                                                 $array_sato[1] = 0;
-                                             else
-                                                 $array_sato[1] = 1;
-                                             if ($result_ninja_sato[2][$count_ninja2] != $ninmu_lang)
-                                                 $array_sato[2] = 0;
-                                             else
-                                                 $array_sato[2] = 1;
-                                             if ($result_ninja_sato[3][$count_ninja3] != $ninmu_lang)
-                                                 $array_sato[3] = 0;
-                                             else
-                                                 $array_sato[3] = 1;
-                                             $array_ratio[0] = $result_ninja_ratio[0][$count_ninja0];
-                                             $array_ratio[1] = $result_ninja_ratio[1][$count_ninja1];
-                                             $array_ratio[2] = $result_ninja_ratio[2][$count_ninja2];
-                                             $array_ratio[3] = $result_ninja_ratio[3][$count_ninja3];
-                                             $point = $result_ninja_point[0][$count_ninja0] + $result_ninja_point[1][$count_ninja1] +
-                                                     $result_ninja_point[2][$count_ninja2] + $result_ninja_point[3][$count_ninja3] - $ninmu_point;
-                                             $arrayy = return_team_with_ratio($array, $count_skill, $array_sato, $point, $array_ratio);
-                                             $arrayx = return_team_with_cost($array, $count_skill, $array_cost);
-                                             $i = 10;
-                                             $value = 0;
-                                             while (@$arrayx[$i]) {
-                                                 $value += $arrayx[$i];
-                                                 $i++;
+                                         if ($arrayy[10] > $team_ratio) {
+                                             if ($team_money_value > $value) {
+                                                 $team_money = $arrayx;
+                                                 $team_money_value = $value;
+                                                 $team_money_value_ratio = $arrayy[10];
                                              }
-                                             if ($random[0] == $count_ninja0 && $random[1] == $count_ninja1 && $random[2] == $count_ninja2 && $random[3] == $count_ninja3) {
-                                                 $team_random = $arrayy;
-                                                 $team_random_value_cost = $value;
-                                                 $team_random_value_ratio = $arrayy[10];
+                                             if ($arrayy[10] > $team_ratio_value) {
+                                                 $team_ratio = $arrayy;
+                                                 $team_ratio_value = $arrayy[10];
+                                                 $team_ratio_value_cost = $value;
                                              }
-                                             if ($arrayy[10] > $ninmu_ratio) {
-                                                 if ($team_money_value > $value) {
-                                                     $team_money = $arrayx;
-                                                     $team_money_value = $value;
-                                                     $team_money_value_ratio = $arrayy[10];
+                                         }
+                                         $count_ninja2++;
+                                     } else {
+                                         $count_ninja3 = 0;
+                                         while (@$result_ninja[3][$count_ninja3]) {
+                                             if ($count_skill == 4) {
+                                                 $array[0] = $result_ninja[0][$count_ninja0];
+                                                 $array_cost[0] = $result_ninja_cost[0][$count_ninja0];
+                                                 $array[1] = $result_ninja[1][$count_ninja1];
+                                                 $array_cost[1] = $result_ninja_cost[1][$count_ninja1];
+                                                 $array[2] = $result_ninja[2][$count_ninja2];
+                                                 $array_cost[2] = $result_ninja_cost[2][$count_ninja2];
+                                                 $array[3] = $result_ninja[3][$count_ninja3];
+                                                 $array_cost[3] = $result_ninja_cost[3][$count_ninja3];
+                                                 if ($result_ninja_sato[0][$count_ninja0] != $ninmu_lang)
+                                                     $array_sato[0] = 0;
+                                                 else
+                                                     $array_sato[0] = 1;
+                                                 if ($result_ninja_sato[1][$count_ninja1] != $ninmu_lang)
+                                                     $array_sato[1] = 0;
+                                                 else
+                                                     $array_sato[1] = 1;
+                                                 if ($result_ninja_sato[2][$count_ninja2] != $ninmu_lang)
+                                                     $array_sato[2] = 0;
+                                                 else
+                                                     $array_sato[2] = 1;
+                                                 if ($result_ninja_sato[3][$count_ninja3] != $ninmu_lang)
+                                                     $array_sato[3] = 0;
+                                                 else
+                                                     $array_sato[3] = 1;
+                                                 $array_ratio[0] = $result_ninja_ratio[0][$count_ninja0];
+                                                 $array_ratio[1] = $result_ninja_ratio[1][$count_ninja1];
+                                                 $array_ratio[2] = $result_ninja_ratio[2][$count_ninja2];
+                                                 $array_ratio[3] = $result_ninja_ratio[3][$count_ninja3];
+                                                 $point = $result_ninja_point[0][$count_ninja0] + $result_ninja_point[1][$count_ninja1] +
+                                                         $result_ninja_point[2][$count_ninja2] + $result_ninja_point[3][$count_ninja3] - $ninmu_point;
+                                                 $arrayy = return_team_with_ratio($array, $count_skill, $array_sato, $point, $array_ratio);
+                                                 $arrayx = return_team_with_cost($array, $count_skill, $array_cost);
+                                                 $i = 10;
+                                                 $value = 0;
+                                                 while (@$arrayx[$i]) {
+                                                     $value += $arrayx[$i];
+                                                     $i++;
                                                  }
-                                                 if ($arrayy[10] > $team_ratio_value) {
-                                                     $team_ratio = $arrayy;
-                                                     $team_ratio_value = $arrayy[10];
-                                                     $team_ratio_value_cost = $value;
+                                                 if ($random[0] == $count_ninja0 && $random[1] == $count_ninja1 && $random[2] == $count_ninja2 && $random[3] == $count_ninja3) {
+                                                     $team_random = $arrayy;
+                                                     $team_random_value_cost = $value;
+                                                     $team_random_value_ratio = $arrayy[10];
                                                  }
-                                             }
-                                             $count_ninja3++;
-                                         } else {
-                                             $count_ninja4 = 0;
-                                             while (@$result_ninja[4][$count_ninja4]) {
-                                                 if ($count_skill == 5) {
-                                                     $array[0] = $result_ninja[0][$count_ninja0];
-                                                     $array_cost[0] = $result_ninja_cost[0][$count_ninja0];
-                                                     $array[1] = $result_ninja[1][$count_ninja1];
-                                                     $array_cost[1] = $result_ninja_cost[1][$count_ninja1];
-                                                     $array[2] = $result_ninja[2][$count_ninja2];
-                                                     $array_cost[2] = $result_ninja_cost[2][$count_ninja2];
-                                                     $array[3] = $result_ninja[3][$count_ninja3];
-                                                     $array_cost[3] = $result_ninja_cost[3][$count_ninja3];
-                                                     $array[4] = $result_ninja[4][$count_ninja4];
-                                                     $array_cost[4] = $result_ninja_cost[4][$count_ninja4];
+                                                 if ($arrayy[10] > $ninmu_ratio) {
+                                                     if ($team_money_value > $value) {
+                                                         $team_money = $arrayx;
+                                                         $team_money_value = $value;
+                                                         $team_money_value_ratio = $arrayy[10];
+                                                     }
+                                                     if ($arrayy[10] > $team_ratio_value) {
+                                                         $team_ratio = $arrayy;
+                                                         $team_ratio_value = $arrayy[10];
+                                                         $team_ratio_value_cost = $value;
+                                                     }
+                                                 }
+                                                 $count_ninja3++;
+                                             } else {
+                                                 $count_ninja4 = 0;
+                                                 while (@$result_ninja[4][$count_ninja4]) {
+                                                     if ($count_skill == 5) {
+                                                         $array[0] = $result_ninja[0][$count_ninja0];
+                                                         $array_cost[0] = $result_ninja_cost[0][$count_ninja0];
+                                                         $array[1] = $result_ninja[1][$count_ninja1];
+                                                         $array_cost[1] = $result_ninja_cost[1][$count_ninja1];
+                                                         $array[2] = $result_ninja[2][$count_ninja2];
+                                                         $array_cost[2] = $result_ninja_cost[2][$count_ninja2];
+                                                         $array[3] = $result_ninja[3][$count_ninja3];
+                                                         $array_cost[3] = $result_ninja_cost[3][$count_ninja3];
+                                                         $array[4] = $result_ninja[4][$count_ninja4];
+                                                         $array_cost[4] = $result_ninja_cost[4][$count_ninja4];
 
-                                                     if ($result_ninja_sato[0][$count_ninja0] != $ninmu_lang)
-                                                         $array_sato[0] = 0;
-                                                     else
-                                                         $array_sato[0] = 1;
-                                                     if ($result_ninja_sato[1][$count_ninja1] != $ninmu_lang)
-                                                         $array_sato[1] = 0;
-                                                     else
-                                                         $array_sato[1] = 1;
-                                                     if ($result_ninja_sato[2][$count_ninja2] != $ninmu_lang)
-                                                         $array_sato[2] = 0;
-                                                     else
-                                                         $array_sato[2] = 1;
-                                                     if ($result_ninja_sato[3][$count_ninja3] != $ninmu_lang)
-                                                         $array_sato[3] = 0;
-                                                     else
-                                                         $array_sato[3] = 1;
-                                                     if ($result_ninja_sato[4][$count_ninja4] != $ninmu_lang)
-                                                         $array_sato[4] = 0;
-                                                     else
-                                                         $array_sato[4] = 1;
-                                                     $array_ratio[0] = $result_ninja_ratio[0][$count_ninja0];
-                                                     $array_ratio[1] = $result_ninja_ratio[1][$count_ninja1];
-                                                     $array_ratio[2] = $result_ninja_ratio[2][$count_ninja2];
-                                                     $array_ratio[3] = $result_ninja_ratio[3][$count_ninja3];
-                                                     $array_ratio[4] = $result_ninja_ratio[4][$count_ninja4];
-                                                     $point = $result_ninja_point[0][$count_ninja0] + $result_ninja_point[1][$count_ninja1] +
-                                                             $result_ninja_point[2][$count_ninja2] + $result_ninja_point [3][$count_ninja3] + $result_ninja_point[4][$count_ninja4] - $ninmu_point;
-                                                     $arrayy = return_team_with_ratio($array, $count_skill, $array_sato, $point, $array_ratio);
-                                                     $arrayx = return_team_with_cost($array, $count_skill, $array_cost);
-                                                     $i = 10;
-                                                     $value = 0;
-                                                     while (@$arrayx[$i]) {
-                                                         $value += $arrayx[$i];
-                                                         $i++;
-                                                     }
-                                                     if ($random[0] == $count_ninja0 && $random[1] == $count_ninja1 && $random[2] == $count_ninja2 && $random[3] == $count_ninja3 && $random[4] == $count_ninja4) {
-                                                         $team_random = $arrayy;
-                                                         $team_random_value_cost = $value;
-                                                         $team_random_value_ratio = $arrayy[10];
-                                                     }
-                                                     if ($arrayy[10] > $ninmu_ratio) {
-                                                         if ($team_money_value > $value) {
-                                                             $team_money = $arrayx;
-                                                             $team_money_value = $value;
-                                                             $team_money_value_ratio = $arrayy[10];
+                                                         if ($result_ninja_sato[0][$count_ninja0] != $ninmu_lang)
+                                                             $array_sato[0] = 0;
+                                                         else
+                                                             $array_sato[0] = 1;
+                                                         if ($result_ninja_sato[1][$count_ninja1] != $ninmu_lang)
+                                                             $array_sato[1] = 0;
+                                                         else
+                                                             $array_sato[1] = 1;
+                                                         if ($result_ninja_sato[2][$count_ninja2] != $ninmu_lang)
+                                                             $array_sato[2] = 0;
+                                                         else
+                                                             $array_sato[2] = 1;
+                                                         if ($result_ninja_sato[3][$count_ninja3] != $ninmu_lang)
+                                                             $array_sato[3] = 0;
+                                                         else
+                                                             $array_sato[3] = 1;
+                                                         if ($result_ninja_sato[4][$count_ninja4] != $ninmu_lang)
+                                                             $array_sato[4] = 0;
+                                                         else
+                                                             $array_sato[4] = 1;
+                                                         $array_ratio[0] = $result_ninja_ratio[0][$count_ninja0];
+                                                         $array_ratio[1] = $result_ninja_ratio[1][$count_ninja1];
+                                                         $array_ratio[2] = $result_ninja_ratio[2][$count_ninja2];
+                                                         $array_ratio[3] = $result_ninja_ratio[3][$count_ninja3];
+                                                         $array_ratio[4] = $result_ninja_ratio[4][$count_ninja4];
+                                                         $point = $result_ninja_point[0][$count_ninja0] + $result_ninja_point[1][$count_ninja1] +
+                                                                 $result_ninja_point[2][$count_ninja2] + $result_ninja_point [3][$count_ninja3] + $result_ninja_point[4][$count_ninja4] - $ninmu_point;
+                                                         $arrayy = return_team_with_ratio($array, $count_skill, $array_sato, $point, $array_ratio);
+                                                         $arrayx = return_team_with_cost($array, $count_skill, $array_cost);
+                                                         $i = 10;
+                                                         $value = 0;
+                                                         while (@$arrayx[$i]) {
+                                                             $value += $arrayx[$i];
+                                                             $i++;
                                                          }
-                                                         if ($arrayy[10] > $team_ratio_value) {
-                                                             $team_ratio = $arrayy;
-                                                             $team_ratio_value = $arrayy[10];
-                                                             $team_ratio_value_cost = $value;
+                                                         if ($random[0] == $count_ninja0 && $random[1] == $count_ninja1 && $random[2] == $count_ninja2 && $random[3] == $count_ninja3 && $random[4] == $count_ninja4) {
+                                                             $team_random = $arrayy;
+                                                             $team_random_value_cost = $value;
+                                                             $team_random_value_ratio = $arrayy[10];
                                                          }
-                                                     }
-                                                     $count_ninja4++;
-                                                 } else {
-                                                     $count_ninja5 = 0;
-                                                     while (@$result_ninja[5][$count_ninja5]) {
-                                                         if ($count_skill == 6) {
-                                                             $array[0] = $result_ninja[0][$count_ninja0];
-                                                             $array_cost[0] = $result_ninja_cost[0][$count_ninja0];
-                                                             $array[1] = $result_ninja[1][$count_ninja1];
-                                                             $array_cost[1] = $result_ninja_cost[1][$count_ninja1];
-                                                             $array[2] = $result_ninja[2][$count_ninja2];
-                                                             $array_cost[2] = $result_ninja_cost[2][$count_ninja2];
-                                                             $array[3] = $result_ninja[3][$count_ninja3];
-                                                             $array_cost[3] = $result_ninja_cost[3][$count_ninja3];
-                                                             $array[4] = $result_ninja[4][$count_ninja4];
-                                                             $array_cost[4] = $result_ninja_cost[4][$count_ninja4];
-                                                             $array[5] = $result_ninja[5][$count_ninja5];
-                                                             $array_cost[5] = $result_ninja_cost[5][$count_ninja5];
-
-                                                             if ($result_ninja_sato[0][$count_ninja0] != $ninmu_lang)
-                                                                 $array_sato[0] = 0;
-                                                             else
-                                                                 $array_sato[0] = 1;
-                                                             if ($result_ninja_sato[1][$count_ninja1] != $ninmu_lang)
-                                                                 $array_sato[1] = 0;
-                                                             else
-                                                                 $array_sato[1] = 1;
-                                                             if ($result_ninja_sato[2][$count_ninja2] != $ninmu_lang)
-                                                                 $array_sato[2] = 0;
-                                                             else
-                                                                 $array_sato[2] = 1;
-                                                             if ($result_ninja_sato[3][$count_ninja3] != $ninmu_lang)
-                                                                 $array_sato[3] = 0;
-                                                             else
-                                                                 $array_sato[3] = 1;
-                                                             if ($result_ninja_sato[4][$count_ninja4] != $ninmu_lang)
-                                                                 $array_sato[4] = 0;
-                                                             else
-                                                                 $array_sato[4] = 1;
-                                                             if ($result_ninja_sato[5][$count_ninja5] != $ninmu_lang)
-                                                                 $array_sato[5] = 0;
-                                                             else
-                                                                 $array_sato[5] = 1;
-                                                             $array_ratio[0] = $result_ninja_ratio[0][$count_ninja0];
-                                                             $array_ratio[1] = $result_ninja_ratio[1][$count_ninja1];
-                                                             $array_ratio[2] = $result_ninja_ratio[2][$count_ninja2];
-                                                             $array_ratio[3] = $result_ninja_ratio[3][$count_ninja3];
-                                                             $array_ratio[4] = $result_ninja_ratio[4][$count_ninja4];
-                                                             $array_ratio[5] = $result_ninja_ratio[5][$count_ninja5];
-                                                             $point = $result_ninja_point[0][$count_ninja0] + $result_ninja_point[1][$count_ninja1] +
-                                                                     $result_ninja_point[2][$count_ninja2] + $result_ninja_point[3][$count_ninja3] +
-                                                                     $result_ninja_point[4][$count_ninja4] + $result_ninja_point[5][$count_ninja5] - $ninmu_point;
-                                                             $arrayy = return_team_with_ratio($array, $count_skill, $array_sato, $point, $array_ratio);
-                                                             $arrayx = return_team_with_cost($array, $count_skill, $array_cost);
-                                                             $i = 10;
-                                                             $value = 0;
-                                                             while (@$arrayx[$i]) {
-                                                                 $value += $arrayx[$i];
-                                                                 $i++;
+                                                         if ($arrayy[10] > $ninmu_ratio) {
+                                                             if ($team_money_value > $value) {
+                                                                 $team_money = $arrayx;
+                                                                 $team_money_value = $value;
+                                                                 $team_money_value_ratio = $arrayy[10];
                                                              }
-                                                             if ($random[0] == $count_ninja0 && $random[1] == $count_ninja1 && $random[2] == $count_ninja2 && $random[3] == $count_ninja3 && $random[4] == $count_ninja4 && $random[5] == $count_ninja5) {
-                                                                 $team_random = $arrayy;
-                                                                 $team_random_value_cost = $value;
-                                                                 $team_random_value_ratio = $arrayy[10];
+                                                             if ($arrayy[10] > $team_ratio_value) {
+                                                                 $team_ratio = $arrayy;
+                                                                 $team_ratio_value = $arrayy[10];
+                                                                 $team_ratio_value_cost = $value;
                                                              }
-                                                             if ($arrayy[10] > $ninmu_ratio) {
-                                                                 if ($team_money_value > $value) {
-                                                                     $team_money = $arrayx;
-                                                                     $team_money_value = $value;
-                                                                     $team_money_value_ratio = $arrayy[10];
-                                                                 }
-                                                                 if ($arrayy[10] > $team_ratio_value) {
-                                                                     $team_ratio = $arrayy;
-                                                                     $team_ratio_value = $arrayy[10];
-                                                                     $team_ratio_value_cost = $value;
-                                                                 }
-                                                             }
-                                                             $count_ninja5++;
-                                                         } else {
-                                                             $count_ninja6 = 0;
-                                                             while (@$result_ninja[6][$count_ninja6]) {
+                                                         }
+                                                         $count_ninja4++;
+                                                     } else {
+                                                         $count_ninja5 = 0;
+                                                         while (@$result_ninja[5][$count_ninja5]) {
+                                                             if ($count_skill == 6) {
                                                                  $array[0] = $result_ninja[0][$count_ninja0];
                                                                  $array_cost[0] = $result_ninja_cost[0][$count_ninja0];
                                                                  $array[1] = $result_ninja[1][$count_ninja1];
@@ -844,8 +777,6 @@ $id = @$_GET['id'];
                                                                  $array_cost[4] = $result_ninja_cost[4][$count_ninja4];
                                                                  $array[5] = $result_ninja[5][$count_ninja5];
                                                                  $array_cost[5] = $result_ninja_cost[5][$count_ninja5];
-                                                                 $array[6] = $result_ninja[6][$count_ninja6];
-                                                                 $array_cost[6] = $result_ninja_cost[6][$count_ninja6];
 
                                                                  if ($result_ninja_sato[0][$count_ninja0] != $ninmu_lang)
                                                                      $array_sato[0] = 0;
@@ -871,21 +802,15 @@ $id = @$_GET['id'];
                                                                      $array_sato[5] = 0;
                                                                  else
                                                                      $array_sato[5] = 1;
-                                                                 if ($result_ninja_sato[6][$count_ninja6] != $ninmu_lang)
-                                                                     $array_sato[6] = 0;
-                                                                 else
-                                                                     $array_sato[6] = 1;
                                                                  $array_ratio[0] = $result_ninja_ratio[0][$count_ninja0];
                                                                  $array_ratio[1] = $result_ninja_ratio[1][$count_ninja1];
                                                                  $array_ratio[2] = $result_ninja_ratio[2][$count_ninja2];
                                                                  $array_ratio[3] = $result_ninja_ratio[3][$count_ninja3];
                                                                  $array_ratio[4] = $result_ninja_ratio[4][$count_ninja4];
                                                                  $array_ratio[5] = $result_ninja_ratio[5][$count_ninja5];
-                                                                 $array_ratio[6] = $result_ninja_ratio[6][$count_ninja6];
                                                                  $point = $result_ninja_point[0][$count_ninja0] + $result_ninja_point[1][$count_ninja1] +
                                                                          $result_ninja_point[2][$count_ninja2] + $result_ninja_point[3][$count_ninja3] +
-                                                                         $result_ninja_point[4][$count_ninja4] + $result_ninja_point[5][$count_ninja5] +
-                                                                         $result_ninja_point[6][$count_ninja6] - $ninmu_point;
+                                                                         $result_ninja_point[4][$count_ninja4] + $result_ninja_point[5][$count_ninja5] - $ninmu_point;
                                                                  $arrayy = return_team_with_ratio($array, $count_skill, $array_sato, $point, $array_ratio);
                                                                  $arrayx = return_team_with_cost($array, $count_skill, $array_cost);
                                                                  $i = 10;
@@ -894,7 +819,7 @@ $id = @$_GET['id'];
                                                                      $value += $arrayx[$i];
                                                                      $i++;
                                                                  }
-                                                                 if ($random[0] == $count_ninja0 && $random[1] == $count_ninja1 && $random[2] == $count_ninja2 && $random[3] == $count_ninja3 && $random[4] == $count_ninja4 && $random[5] == $count_ninja5 && $random[6] == $count_ninja6) {
+                                                                 if ($random[0] == $count_ninja0 && $random[1] == $count_ninja1 && $random[2] == $count_ninja2 && $random[3] == $count_ninja3 && $random[4] == $count_ninja4 && $random[5] == $count_ninja5) {
                                                                      $team_random = $arrayy;
                                                                      $team_random_value_cost = $value;
                                                                      $team_random_value_ratio = $arrayy[10];
@@ -911,26 +836,110 @@ $id = @$_GET['id'];
                                                                          $team_ratio_value_cost = $value;
                                                                      }
                                                                  }
-                                                                 $count_ninja6++;
+                                                                 $count_ninja5++;
+                                                             } else {
+                                                                 $count_ninja6 = 0;
+                                                                 while (@$result_ninja[6][$count_ninja6]) {
+                                                                     $array[0] = $result_ninja[0][$count_ninja0];
+                                                                     $array_cost[0] = $result_ninja_cost[0][$count_ninja0];
+                                                                     $array[1] = $result_ninja[1][$count_ninja1];
+                                                                     $array_cost[1] = $result_ninja_cost[1][$count_ninja1];
+                                                                     $array[2] = $result_ninja[2][$count_ninja2];
+                                                                     $array_cost[2] = $result_ninja_cost[2][$count_ninja2];
+                                                                     $array[3] = $result_ninja[3][$count_ninja3];
+                                                                     $array_cost[3] = $result_ninja_cost[3][$count_ninja3];
+                                                                     $array[4] = $result_ninja[4][$count_ninja4];
+                                                                     $array_cost[4] = $result_ninja_cost[4][$count_ninja4];
+                                                                     $array[5] = $result_ninja[5][$count_ninja5];
+                                                                     $array_cost[5] = $result_ninja_cost[5][$count_ninja5];
+                                                                     $array[6] = $result_ninja[6][$count_ninja6];
+                                                                     $array_cost[6] = $result_ninja_cost[6][$count_ninja6];
+
+                                                                     if ($result_ninja_sato[0][$count_ninja0] != $ninmu_lang)
+                                                                         $array_sato[0] = 0;
+                                                                     else
+                                                                         $array_sato[0] = 1;
+                                                                     if ($result_ninja_sato[1][$count_ninja1] != $ninmu_lang)
+                                                                         $array_sato[1] = 0;
+                                                                     else
+                                                                         $array_sato[1] = 1;
+                                                                     if ($result_ninja_sato[2][$count_ninja2] != $ninmu_lang)
+                                                                         $array_sato[2] = 0;
+                                                                     else
+                                                                         $array_sato[2] = 1;
+                                                                     if ($result_ninja_sato[3][$count_ninja3] != $ninmu_lang)
+                                                                         $array_sato[3] = 0;
+                                                                     else
+                                                                         $array_sato[3] = 1;
+                                                                     if ($result_ninja_sato[4][$count_ninja4] != $ninmu_lang)
+                                                                         $array_sato[4] = 0;
+                                                                     else
+                                                                         $array_sato[4] = 1;
+                                                                     if ($result_ninja_sato[5][$count_ninja5] != $ninmu_lang)
+                                                                         $array_sato[5] = 0;
+                                                                     else
+                                                                         $array_sato[5] = 1;
+                                                                     if ($result_ninja_sato[6][$count_ninja6] != $ninmu_lang)
+                                                                         $array_sato[6] = 0;
+                                                                     else
+                                                                         $array_sato[6] = 1;
+                                                                     $array_ratio[0] = $result_ninja_ratio[0][$count_ninja0];
+                                                                     $array_ratio[1] = $result_ninja_ratio[1][$count_ninja1];
+                                                                     $array_ratio[2] = $result_ninja_ratio[2][$count_ninja2];
+                                                                     $array_ratio[3] = $result_ninja_ratio[3][$count_ninja3];
+                                                                     $array_ratio[4] = $result_ninja_ratio[4][$count_ninja4];
+                                                                     $array_ratio[5] = $result_ninja_ratio[5][$count_ninja5];
+                                                                     $array_ratio[6] = $result_ninja_ratio[6][$count_ninja6];
+                                                                     $point = $result_ninja_point[0][$count_ninja0] + $result_ninja_point[1][$count_ninja1] +
+                                                                             $result_ninja_point[2][$count_ninja2] + $result_ninja_point[3][$count_ninja3] +
+                                                                             $result_ninja_point[4][$count_ninja4] + $result_ninja_point[5][$count_ninja5] +
+                                                                             $result_ninja_point[6][$count_ninja6] - $ninmu_point;
+                                                                     $arrayy = return_team_with_ratio($array, $count_skill, $array_sato, $point, $array_ratio);
+                                                                     $arrayx = return_team_with_cost($array, $count_skill, $array_cost);
+                                                                     $i = 10;
+                                                                     $value = 0;
+                                                                     while (@$arrayx[$i]) {
+                                                                         $value += $arrayx[$i];
+                                                                         $i++;
+                                                                     }
+                                                                     if ($random[0] == $count_ninja0 && $random[1] == $count_ninja1 && $random[2] == $count_ninja2 && $random[3] == $count_ninja3 && $random[4] == $count_ninja4 && $random[5] == $count_ninja5 && $random[6] == $count_ninja6) {
+                                                                         $team_random = $arrayy;
+                                                                         $team_random_value_cost = $value;
+                                                                         $team_random_value_ratio = $arrayy[10];
+                                                                     }
+                                                                     if ($arrayy[10] > $ninmu_ratio) {
+                                                                         if ($team_money_value > $value) {
+                                                                             $team_money = $arrayx;
+                                                                             $team_money_value = $value;
+                                                                             $team_money_value_ratio = $arrayy[10];
+                                                                         }
+                                                                         if ($arrayy[10] > $team_ratio_value) {
+                                                                             $team_ratio = $arrayy;
+                                                                             $team_ratio_value = $arrayy[10];
+                                                                             $team_ratio_value_cost = $value;
+                                                                         }
+                                                                     }
+                                                                     $count_ninja6++;
+                                                                 }
+                                                                 $count_ninja5 ++;
                                                              }
-                                                             $count_ninja5 ++;
                                                          }
+                                                         $count_ninja4++;
                                                      }
-                                                     $count_ninja4++;
                                                  }
+                                                 $count_ninja3++;
                                              }
-                                             $count_ninja3++;
                                          }
+                                         $count_ninja2++;
                                      }
-                                     $count_ninja2++;
                                  }
+                                 $count_ninja1++;
                              }
-                             $count_ninja1++;
                          }
+                         $count_ninja0++;
                      }
-                     $count_ninja0++;
                  }
-             }
+             
              $kt = 0;
              ?>
 
@@ -957,6 +966,8 @@ $id = @$_GET['id'];
                    </div>
                 </div>
              </div>
+             <?php }
+             ?>
              <div id ="team-ninja-random">
                  <?php
                  $i = 0;
@@ -975,7 +986,7 @@ $id = @$_GET['id'];
                        <div class = 'col-take-3x'><span style="font-weight: bold;font-size:20px;">
                              <?php echo $sum; ?></span> nhiệm vụ &nbsp;&nbsp;
                           <span style="font-weight: bold;font-size:20px;">    
-                             <?php echo " $avg"; ?></span>% thành công</div>
+                    <?php echo " $avg"; ?></span>% thành công</div>
                     </div>
                     <?php
                     $i++;
@@ -1002,7 +1013,7 @@ $id = @$_GET['id'];
                        <div class = 'col-take-3x'><span style="font-weight: bold;font-size:20px;">
                              <?php echo $sum; ?></span> nhiệm vụ &nbsp;&nbsp;
                           <span style="font-weight: bold;font-size:20px;">    
-                             <?php echo " $avg"; ?></span>% thành công</div>
+                    <?php echo " $avg"; ?></span>% thành công</div>
                     </div>
                     <?php
                     $i++;
@@ -1028,7 +1039,7 @@ $id = @$_GET['id'];
                        <div class = 'col-take-3x'><span style="font-weight: bold;font-size:20px;">
                              <?php echo $sum; ?></span> nhiệm vụ &nbsp;&nbsp;
                           <span style="font-weight: bold;font-size:20px;">    
-                             <?php echo " $avg"; ?></span>% thành công</div>
+                    <?php echo " $avg"; ?></span>% thành công</div>
                     </div>
                     <?php
                     $i++;
@@ -1037,6 +1048,7 @@ $id = @$_GET['id'];
                 <input id="submit-team-money" type="button" name="Release_money" onclick="document.write('<?php submit_team_money() ?>');" value="Chọn Đội Money"/>
              </div>
              <?php
+         }
          }
 
          function submit_team_random($team_random) {
@@ -1075,6 +1087,7 @@ $id = @$_GET['id'];
                          pg_query("insert into ninmu_ninja values($ninmu_count, $trandom)");
                          $i++;
                      }
+                     date_default_timezone_set('Asia/Saigon');
                      $today = date('Y-m-d H:i:s');
                      pg_query($conn, "insert into customer_ninmu values($cusid, $ninmu_count, '$today')");
                  }
@@ -1121,6 +1134,7 @@ $id = @$_GET['id'];
                          pg_query("insert into ninmu_ninja values($ninmu_count, $trandom)");
                          $i++;
                      }
+                     date_default_timezone_set('Asia/Saigon');
                      $today = date('Y-m-d H:i:s');
                      pg_query($conn, "insert into customer_ninmu values($cusid, $ninmu_count, '$today')");
                  }
@@ -1167,6 +1181,7 @@ $id = @$_GET['id'];
                          pg_query("insert into ninmu_ninja values($ninmu_count, $trandom)");
                          $i++;
                      }
+                     date_default_timezone_set('Asia/Saigon');
                      $today = date('Y-m-d H:i:s');
                      pg_query($conn, "insert into customer_ninmu values($cusid, $ninmu_count, '$today')");
                  }
